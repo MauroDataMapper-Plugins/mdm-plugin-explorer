@@ -17,22 +17,31 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.research
 
+import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
+import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
+import uk.ac.ox.softeng.maurodatamapper.test.functional.BaseFunctionalSpec
+
 import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 import grails.testing.spock.RunOnce
 import groovy.util.logging.Slf4j
 import spock.lang.Shared
-import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
-import uk.ac.ox.softeng.maurodatamapper.test.functional.BaseFunctionalSpec
+
 import static io.micronaut.http.HttpStatus.OK
+import static uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress.FUNCTIONAL_TEST
 
 /**
- * @see ResearchController* Controller: dataModel
- *  | POST   | /api/dataModels       | Action: save   |
+ * @see ResearchController
+ *  | PUT   | /api/researchAccessRequest       | Action: submit   |
  */
 @Integration
 @Slf4j
 class ResearchFunctionalSpec extends BaseFunctionalSpec {
+
+    @Shared
+    UUID dataModelId
 
     @Shared
     UUID folderId
@@ -42,14 +51,24 @@ class ResearchFunctionalSpec extends BaseFunctionalSpec {
     def setup() {
         log.debug('Check and setup test data')
         sessionFactory.currentSession.flush()
-        //folderId = new Folder(label: 'Functional Test Folder', createdBy: uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress.getFUNCTIONAL_TEST).save(flush: true).id
-        //assert folderId
+        Folder folder = new Folder(label: 'Functional Test Folder',
+                                   createdBy: FUNCTIONAL_TEST).save(flush: true)
+        folderId = folder.id
+        assert folderId
+
+        DataModel dataModel = new DataModel(createdBy: FUNCTIONAL_TEST,
+                                            label: 'Functional Test Data Model',
+                                            folder: folder,
+                                            type: DataModelType.DATA_ASSET,
+                                            authority: Authority.findByDefaultAuthority(true)).save(flush: true)
+        dataModelId = dataModel.id
+        assert dataModelId
     }
 
     @Transactional
     def cleanupSpec() {
         log.debug('CleanupSpec ResearchFunctionalSpec')
-        cleanUpResources(Folder)
+        cleanUpResources(DataModel, Folder)
     }
 
     @Override
@@ -59,7 +78,7 @@ class ResearchFunctionalSpec extends BaseFunctionalSpec {
 
     void 'test submit'() {
         when:
-        PUT("/${UUID.randomUUID()}", [:])
+        PUT("/${dataModelId}", [:])
 
         then:
         verifyResponse OK, response
