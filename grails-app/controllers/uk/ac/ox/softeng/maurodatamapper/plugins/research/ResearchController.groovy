@@ -47,11 +47,11 @@ class ResearchController implements ResourcelessMdmController {
         if (dataModel.branchName != VersionAwareConstraints.DEFAULT_BRANCH_NAME) return forbidden('Cannot submit a non-main branch')
 
         dataModel = dataModelService.finaliseModel(
-                dataModel,
-                currentUser,
-                null,
-                VersionChangeType.MAJOR,
-                "Requested"
+            dataModel,
+            currentUser,
+            null,
+            VersionChangeType.MAJOR,
+            "Requested"
         )
 
         dataModel
