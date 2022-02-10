@@ -1,4 +1,4 @@
-ß# mdm-plugin-research
+# mdm-plugin-research
 
 | Branch | Build Status |
 | ------ | ------------ |
