@@ -17,10 +17,8 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.research
 
-import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.test.functional.BaseFunctionalSpec
 
 import grails.gorm.transactions.Transactional
@@ -29,8 +27,8 @@ import grails.testing.spock.RunOnce
 import groovy.util.logging.Slf4j
 import spock.lang.Shared
 
+import static io.micronaut.http.HttpStatus.FORBIDDEN
 import static io.micronaut.http.HttpStatus.OK
-import static uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress.FUNCTIONAL_TEST
 
 /**
  * @see ResearchController
@@ -51,16 +49,11 @@ class ResearchFunctionalSpec extends BaseFunctionalSpec {
     def setup() {
         log.debug('Check and setup test data')
         sessionFactory.currentSession.flush()
-        Folder folder = new Folder(label: 'Functional Test Folder',
-                                   createdBy: FUNCTIONAL_TEST).save(flush: true)
+        Folder folder = Folder.findByLabel('Functional Test Folder')
         folderId = folder.id
         assert folderId
 
-        DataModel dataModel = new DataModel(createdBy: FUNCTIONAL_TEST,
-                                            label: 'Functional Test Data Model',
-                                            folder: folder,
-                                            type: DataModelType.DATA_ASSET,
-                                            authority: Authority.findByDefaultAuthority(true)).save(flush: true)
+        DataModel dataModel = DataModel.findByLabel('Functional Test Data Model')
         dataModelId = dataModel.id
         assert dataModelId
     }
@@ -77,10 +70,17 @@ class ResearchFunctionalSpec extends BaseFunctionalSpec {
     }
 
     void 'test submit'() {
-        when:
+        when: 'submit the data model'
         PUT("/${dataModelId}", [:])
 
         then:
         verifyResponse OK, response
+
+        when: 'submit the data model again'
+        PUT("/${dataModelId}", [:])
+
+        then:
+        verifyResponse FORBIDDEN, response
+        responseBody().additional == 'Cannot submit a finalised Model'
     }
 }
