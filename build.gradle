@@ -116,6 +116,7 @@ bootJar.enabled = false
 grails {
     plugins {
         implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-core', version: mdmCoreVersion
+        implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-security', version: mdmCoreVersion
     }
 }
 

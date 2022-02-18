@@ -1,4 +1,4 @@
-ß# mdm-plugin-research
+# mdm-plugin-research
 
 | Branch | Build Status |
 | ------ | ------------ |
@@ -17,6 +17,15 @@ All of the above can be installed and easily maintained by using [SDKMAN!](https
 
 The preferred way of running Mauro Data Mapper is using the [mdm-docker](https://github.com/MauroDataMapper/mdm-docker) deployment. However you can
 also run the backend on its own from [mdm-application-build](https://github.com/MauroDataMapper/mdm-application-build).
+
+## Usage
+
+The plugin requires that the following API Properties are set:
+
+- ```email.research.request.recipient``` Email address of the user who should receive a notification email when a research access request is
+  submitted. This must match the email address of a registered Catalogue User.
+- ```email.research.request.subject``` Subject line of the above email
+- ```email.research.request.body```Body of the above email
 
 ### mdm-docker
 

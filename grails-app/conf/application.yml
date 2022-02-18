@@ -146,7 +146,7 @@ environments:
         spring.flyway.enabled: false
         database:
             name: 'mpt'
-            creation: 'CREATE SCHEMA IF NOT EXISTS CORE'
+            creation: 'CREATE SCHEMA IF NOT EXISTS CORE\;CREATE SCHEMA IF NOT EXISTS SECURITY\;CREATE SCHEMA IF NOT EXISTS DATAMODEL'
         dataSource:
             driverClassName: org.h2.Driver
             dialect: org.hibernate.dialect.H2Dialect
