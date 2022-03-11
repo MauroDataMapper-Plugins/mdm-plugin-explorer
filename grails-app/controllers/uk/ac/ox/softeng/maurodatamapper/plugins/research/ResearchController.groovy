@@ -25,6 +25,7 @@ import uk.ac.ox.softeng.maurodatamapper.core.gorm.constraint.callable.VersionAwa
 import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.ResourcelessMdmController
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.plugins.research.rest.transport.Contact
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUser
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
 import uk.ac.ox.softeng.maurodatamapper.version.VersionChangeType
@@ -46,6 +47,9 @@ class ResearchController implements ResourcelessMdmController, WebAttributes {
     final String APPROVAL_RECIPIENT_KEY = 'email.research.request.recipient'
     final String APPROVAL_EMAIL_SUBJECT_KEY = 'email.research.request.subject'
     final String APPROVAL_EMAIL_BODY_KEY = 'email.research.request.body'
+    final String CONTACT_RECIPIENT_KEY = 'email.research.contact.recipient'
+    final String CONTACT_EMAIL_SUBJECT_KEY = 'email.research.contact.subject'
+    final String CONTACT_EMAIL_BODY_KEY = 'email.research.contact.body'
 
     /**
      * 'Submit' an access request by finalising the relevant Data Model and sending an email
@@ -85,5 +89,25 @@ class ResearchController implements ResourcelessMdmController, WebAttributes {
     String getSiteUrl() {
         ApiProperty property = apiPropertyService.findByApiPropertyEnum(SITE_URL)
         property ? property.value : "${webRequest.baseUrl}${webRequest.contextPath}"
+    }
+
+    def contact(Contact contact) {
+        ApiProperty recipientEmailAddress = apiPropertyService.findByKey(CONTACT_RECIPIENT_KEY)
+        if (!recipientEmailAddress) throw new ApiInternalException("RC03", "Sorry, a configuration error prevented your request from being processed.")
+
+        CatalogueUser recipientUser = catalogueUserService.findByEmailAddress(recipientEmailAddress.value)
+        if (!recipientUser) throw new ApiInternalException("RC04", "Sorry, a configuration error prevented your request from being processed.")
+
+        Map<String, String> propertiesMap = [
+            firstName: contact.firstName ?: "Not provided",
+            lastName: contact.lastName ?: "Not provided",
+            organisation: contact.organisation ?: "Not provided",
+            subject: contact.subject ?: "Not provided",
+            message: contact.message ?: "Not provided",
+            emailAddress: contact.emailAddress ?: "Not provided"
+        ]
+        emailService.sendEmailToUser(CONTACT_EMAIL_SUBJECT_KEY, CONTACT_EMAIL_BODY_KEY, recipientUser, propertiesMap)
+
+        contact
     }
 }

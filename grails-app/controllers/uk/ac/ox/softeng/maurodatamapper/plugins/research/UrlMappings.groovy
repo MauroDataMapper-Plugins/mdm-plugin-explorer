@@ -22,6 +22,7 @@ class UrlMappings {
     static mappings = {
         group '/api', {
             put "/researchAccessRequest/$dataModelId"(controller: 'research', action: 'submit')
+            post "/contact"(controller: 'research', action: 'contact')
         }
     }
 }

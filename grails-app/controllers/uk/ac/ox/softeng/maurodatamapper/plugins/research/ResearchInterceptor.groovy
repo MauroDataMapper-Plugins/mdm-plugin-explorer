@@ -44,6 +44,12 @@ class ResearchInterceptor extends TieredAccessSecurableResourceInterceptor {
      * @return
      */
     boolean before() {
+
+        // Contact form available for any user
+        if (['contact'].contains(actionName)) {
+            return true
+        }
+
         securableResourceChecks()
 
         boolean canReadId = currentUserSecurityPolicyManager.userCanReadSecuredResourceId(DataModel, getId())

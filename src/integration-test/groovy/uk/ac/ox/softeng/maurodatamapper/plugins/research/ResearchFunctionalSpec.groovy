@@ -83,4 +83,19 @@ class ResearchFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse FORBIDDEN, response
         responseBody().additional == 'Cannot submit a finalised Model'
     }
+
+    void 'test contact'() {
+        when: 'submit a contact form'
+        POST("contact", [
+            firstName: "My first name",
+            lastName: "My last name",
+            organisation: "My organisation",
+            subject: "My subject",
+            message: "My message",
+            emailAddress: "my.email@example.com"
+        ], MAP_ARG, true)
+
+        then:
+        verifyResponse OK, response
+    }
 }
