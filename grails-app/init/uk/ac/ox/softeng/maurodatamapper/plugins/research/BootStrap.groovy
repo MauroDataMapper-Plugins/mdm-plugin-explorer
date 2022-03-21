@@ -118,6 +118,14 @@ class BootStrap implements SecurityDefinition {
                                                             lastUpdatedBy: userEmailAddresses.development,
                                                             createdBy: userEmailAddresses.development)
                     checkAndSave(messageSource, recipient)
+
+                    ApiProperty contactRecipient = new ApiProperty(key: 'email.research.contact.recipient',
+                                                            value: 'admin@maurodatamapper.com',
+                                                            publiclyVisible: false,
+                                                            category: 'Email',
+                                                            lastUpdatedBy: userEmailAddresses.development,
+                                                            createdBy: userEmailAddresses.development)
+                    checkAndSave(messageSource, contactRecipient)
                 }
 
 
