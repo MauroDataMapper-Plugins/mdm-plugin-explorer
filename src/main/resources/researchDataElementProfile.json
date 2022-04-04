@@ -1,0 +1,85 @@
+[
+  {
+    "sectionName": "Identifiable Information",
+    "sectionDescription": "Whether this column may contain identifiable or sensitive information, and any further details",
+    "fields": [
+      {
+        "fieldName": "Identifiable Data",
+        "metadataPropertyName": "identifiableData",
+        "description": "Indicative value to show whether this field contains identifiable information.  More detail is provided in the description field",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "enumeration",
+        "allowedValues": ["Legally Restricted", "Identifying", "Pseudonymised", "Maybe identifying", "Anonymous"]
+      },
+      {
+        "fieldName": "More details...",
+        "metadataPropertyName": "identifiableDetails",
+        "description": "Further details to explain how the field may contain identifiable data, and any restrictions on its availability",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "text"
+      }
+    ]
+  },
+  {
+    "sectionName": "Context",
+    "sectionDescription": "The forwards- and backwards provenance of this field, along with conceptual data types ",
+    "fields": [
+      {
+        "fieldName": "Source System",
+        "metadataPropertyName": "sourceSystem",
+        "description": "The source system that this field originated from",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      },
+      {
+        "fieldName": "Target Dataset",
+        "metadataPropertyName": "targetDataset",
+        "description": "Any research or national datasets that this field is also used for",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      },
+      {
+        "fieldName": "Terminology",
+        "metadataPropertyName": "terminology",
+        "description": "The name of any terminology that data from this field is taken from - e.g. SNOMED or ICD-10",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      },
+      {
+        "fieldName": "Data Dictionary Item",
+        "metadataPropertyName": "dataDictionaryItem",
+        "description": "A link to a field in the NHS Data Dictionary that this field is defined by",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      }
+    ]
+  },
+  {
+    "sectionName": "Warehousing details",
+    "sectionDescription": "Details pertaining to this item within the Clinical Data Warehouse",
+    "fields": [
+      {
+        "fieldName": "Last Update",
+        "metadataPropertyName": "lastUpdated",
+        "description": "The date when this field was last updated from the source system",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "date"
+      },
+      {
+        "fieldName": "Database Name",
+        "metadataPropertyName": "databaseName",
+        "description": "The column name of this field within the warehouse database",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      }
+    ]
+  }
+]
