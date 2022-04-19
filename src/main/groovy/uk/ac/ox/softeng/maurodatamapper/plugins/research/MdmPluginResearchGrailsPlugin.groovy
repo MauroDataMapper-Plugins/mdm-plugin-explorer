@@ -17,6 +17,7 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.research
 
+import uk.ac.ox.softeng.maurodatamapper.plugins.research.rest.transport.search.searchparamfilter.ResearchProfileFilter
 
 import grails.plugins.Plugin
 
@@ -44,13 +45,13 @@ Controller for endpoints specific to researcher data access requests.
     // Extra (optional) plugin metadata
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
-        def license = "APACHE"
+    def license = "APACHE"
 
     // Details of company behind the plugin (if there is one)
     def organization = [name: "Oxford University BRC Informatics", url: "www.ox.ac.uk"]
 
     // Any additional developers beyond the author specified above.
-    //    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
+    def developers = [[name: 'Oliver Freeman', email: 'oliver.freeman@bdi.ox.ac.uk'],]
 
     // Location of the plugin's issue tracker.
     def issueManagement = [system: "YouTrack", url: "https://maurodatamapper.myjetbrains.com"]
@@ -60,7 +61,7 @@ Controller for endpoints specific to researcher data access requests.
 
     Closure doWithSpring() {
         {->
-            // TODO Implement runtime spring config (optional)
+            researchProfileFilter ResearchProfileFilter
         }
     }
 
