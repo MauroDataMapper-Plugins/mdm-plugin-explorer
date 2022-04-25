@@ -31,8 +31,8 @@ import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
 import uk.ac.ox.softeng.maurodatamapper.version.VersionChangeType
 
 import grails.gorm.transactions.Transactional
-import groovy.util.logging.Slf4j
 import grails.web.api.WebAttributes
+import groovy.util.logging.Slf4j
 
 import static uk.ac.ox.softeng.maurodatamapper.core.admin.ApiPropertyEnum.SITE_URL
 
