@@ -20,12 +20,23 @@ also run the backend on its own from [mdm-application-build](https://github.com/
 
 ## Usage
 
-The plugin requires that the following API Properties are set:
+### Submitting data requests
 
-- ```email.research.request.recipient``` Email address of the user who should receive a notification email when a research access request is
+To successfully send data requests to an organisation, these API properties must be defined in your Mauro instance:
+
+- `email.research.request.recipient` Email address of the user who should receive a notification email when a research access request is
   submitted. This must match the email address of a registered Catalogue User.
-- ```email.research.request.subject``` Subject line of the above email
-- ```email.research.request.body```Body of the above email
+- `email.research.request.subject` Subject line of the above email
+- `email.research.request.body` Body of the above email
+
+### Contact
+
+To successfully send a contact form to an organistion, these API properties must be defined in your Mauro instance:
+
+- `email.research.contact.recipient` Email address of the user who should receive a notification email when a contact form is 
+  submitted. This must match the email address of a registered Catalogue User.
+- `email.research.contact.subject` Subject line of the above email
+- `email.research.contact.body` Body of the above email
 
 ### mdm-docker
 
