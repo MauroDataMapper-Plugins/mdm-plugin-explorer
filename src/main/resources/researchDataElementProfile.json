@@ -61,6 +61,24 @@
         "minMultiplicity": 0,
         "maxMultiplicity": 1,
         "dataType": "string"
+      },
+      {
+        "fieldName": "Sector of Care",
+        "metadataPropertyName": "careSector",
+        "description": "Whether this field is collected as part of Primary, Secondary or Tertiary care",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "enumeration",
+        "allowedValues": ["Primary", "Secondary", "Tertiary"]
+      },
+      {
+        "fieldName": "Admission Route",
+        "metadataPropertyName": "admissionRoute",
+        "description": "The route of admission where this field is collected (where applicable)",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "enumeration",
+        "allowedValues": ["Emergency", "Maternity", "In-patient", "Out-patient"]
       }
     ]
   },
