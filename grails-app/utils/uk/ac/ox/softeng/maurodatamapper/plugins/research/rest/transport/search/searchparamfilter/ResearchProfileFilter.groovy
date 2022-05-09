@@ -51,12 +51,15 @@ class ResearchProfileFilter extends DateTimeSearchParamFilter {
                         case 'identifiableData':
                             String value = filterTerm
                             if (value.toLowerCase() == 'identifying') {
+                                // Ensures that "identifying" does NOT match to "Maybe Identifying" which is another enumeration.
+                                // All other enumerations are distinct and therefore will not match to another option so we can use "phrase"
                                 simpleQueryString('identifying + -maybe', MetadataBridge.makeSafeFieldName("${namespace}|${key}"))
                             } else {
                                 phrase(MetadataBridge.makeSafeFieldName("${namespace}|${key}"), filterTerm)
                             }
                             break
                         case 'sourceSystem': case 'targetDataset': case 'terminology': case 'dataDictionaryItem': case 'databaseName':
+                            // Phrase searching is the best option for filters as it requires the field to contain that exact phrase
                             phrase(MetadataBridge.makeSafeFieldName("${namespace}|${key}"), filterTerm)
                             break
                             // Date searching is not possible as the value is stored as a string and therefore indexed as a string which means we can't perform the desired
