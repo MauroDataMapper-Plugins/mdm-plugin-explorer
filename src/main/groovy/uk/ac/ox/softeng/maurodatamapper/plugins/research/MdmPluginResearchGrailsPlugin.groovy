@@ -59,6 +59,11 @@ Controller for endpoints specific to researcher data access requests.
     // Online location of the plugin's browseable source code.
     def scm = [url: "https://github.com/MauroDataMapper-Plugins/mdm-plugin-research"]
 
+    def dependsOn = [
+        mdmCore           : '5.2.0-SNAPSHOT > *',
+        mdmPluginDatamodel: '5.2.0-SNAPSHOT > *',
+    ]
+
     Closure doWithSpring() {
         {->
             researchProfileFilter ResearchProfileFilter
