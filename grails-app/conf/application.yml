@@ -162,4 +162,8 @@ environments:
             password: MauroDataMapper1234
             dbCreate: none
             url: 'jdbc:postgresql://${database.host}:${database.port}/${database.name}'
+        grails:
+            plugins:
+                hibernatesearch:
+                    rebuildIndexOnStart: false
 ---
