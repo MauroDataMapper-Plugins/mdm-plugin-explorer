@@ -75,7 +75,7 @@ class BootStrap implements SecurityDefinition {
         ApiProperty.withNewTransaction {
             if (ApiProperty.countByKey('explorer.config.root_data_model_path') == 0) {
                 ApiProperty rootPath = new ApiProperty(key: 'explorer.config.root_data_model_path',
-                                                       value: 'not set',
+                                                       value: 'NOT SET',
                                                        publiclyVisible: true,
                                                        category: 'Mauro Data Explorer',
                                                        lastUpdatedBy: StandardEmailAddress.ADMIN,
