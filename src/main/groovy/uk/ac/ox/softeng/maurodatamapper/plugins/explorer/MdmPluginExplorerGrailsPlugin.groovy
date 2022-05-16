@@ -17,6 +17,7 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.gorm.mapping.MdmPluginExplorerSchemaMappingContext
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.rest.transport.search.searchparamfilter.ResearchProfileFilter
 
 import grails.plugins.Plugin
@@ -62,11 +63,14 @@ Controller for endpoints specific to the mauro data explorer.
     def dependsOn = [
         mdmCore           : '5.2.0-SNAPSHOT > *',
         mdmPluginDatamodel: '5.2.0-SNAPSHOT > *',
+        mdmPluginProfile  : '5.2.0-SNAPSHOT > *',
     ]
 
     Closure doWithSpring() {
         {->
             researchProfileFilter ResearchProfileFilter
+
+            mdmPluginExplorerSchemaMappingContext MdmPluginExplorerSchemaMappingContext
         }
     }
 
