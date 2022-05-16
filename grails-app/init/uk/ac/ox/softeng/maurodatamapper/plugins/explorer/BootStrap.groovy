@@ -20,11 +20,13 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 import uk.ac.ox.softeng.maurodatamapper.core.MdmCoreGrailsPlugin
 import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiProperty
 import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
+import uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUser
 import uk.ac.ox.softeng.maurodatamapper.security.SecurableResource
+import uk.ac.ox.softeng.maurodatamapper.security.UserGroup
 import uk.ac.ox.softeng.maurodatamapper.security.basic.UnloggedUser
 import uk.ac.ox.softeng.maurodatamapper.security.policy.GroupBasedSecurityPolicyManagerService
 import uk.ac.ox.softeng.maurodatamapper.security.policy.GroupBasedUserSecurityPolicyManager
@@ -50,6 +52,68 @@ class BootStrap implements SecurityDefinition {
     GrailsApplication grailsApplication
 
     def init = {servletContext ->
+        log.debug('Starting main bootstrap')
+        CatalogueUser.withNewTransaction {
+            admin = CatalogueUser.findByEmailAddress(StandardEmailAddress.ADMIN)
+            UserGroup explorerReaders = UserGroup.findByName('Explorer Readers')
+            if (!explorerReaders) {
+                explorerReaders = new UserGroup(createdBy: StandardEmailAddress.ADMIN,
+                                                name: 'Explorer Readers',
+                                                undeleteable: false)
+                    .addToGroupMembers(admin)
+                checkAndSave(messageSource, explorerReaders)
+            }
+        }
+
+        Folder.withNewTransaction {
+            if (Folder.countByLabel('Explorer Content') == 0) {
+                Folder folder = new Folder(label: 'Explorer Content', createdBy: StandardEmailAddress.ADMIN)
+                checkAndSave(messageSource, folder)
+            }
+        }
+
+        ApiProperty.withNewTransaction {
+            if (ApiProperty.countByKey('explorer.config.root_data_model_path') == 0) {
+                ApiProperty rootPath = new ApiProperty(key: 'explorer.config.root_data_model_path',
+                                                       value: 'NOT SET',
+                                                       publiclyVisible: true,
+                                                       category: 'Mauro Data Explorer',
+                                                       lastUpdatedBy: StandardEmailAddress.ADMIN,
+                                                       createdBy: StandardEmailAddress.ADMIN)
+                checkAndSave(messageSource, rootPath)
+            }
+
+            if (ApiProperty.countByKey('explorer.config.root_request_folder') == 0) {
+                ApiProperty requestFolder = new ApiProperty(key: 'explorer.config.root_request_folder',
+                                                            value: 'Explorer Content',
+                                                            publiclyVisible: true,
+                                                            category: 'Mauro Data Explorer',
+                                                            lastUpdatedBy: StandardEmailAddress.ADMIN,
+                                                            createdBy: StandardEmailAddress.ADMIN)
+                checkAndSave(messageSource, requestFolder)
+            }
+
+            if (ApiProperty.countByKey('explorer.config.profile_namespace') == 0) {
+                ApiProperty profileNamespace = new ApiProperty(key: 'explorer.config.profile_namespace',
+                                                               value: 'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research',
+                                                               publiclyVisible: true,
+                                                               category: 'Mauro Data Explorer',
+                                                               lastUpdatedBy: StandardEmailAddress.ADMIN,
+                                                               createdBy: StandardEmailAddress.ADMIN)
+                checkAndSave(messageSource, profileNamespace)
+            }
+
+            if (ApiProperty.countByKey('explorer.config.profile_service_name') == 0) {
+                ApiProperty profileName = new ApiProperty(key: 'explorer.config.profile_service_name',
+                                                          value: 'ResearchDataElementProfileProviderService',
+                                                          publiclyVisible: true,
+                                                          category: 'Mauro Data Explorer',
+                                                          lastUpdatedBy: StandardEmailAddress.ADMIN,
+                                                          createdBy: StandardEmailAddress.ADMIN)
+                checkAndSave(messageSource, profileName)
+            }
+        }
+
         log.debug('Main bootstrap complete')
 
         environments {

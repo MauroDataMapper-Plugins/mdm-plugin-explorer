@@ -20,6 +20,17 @@ also run the backend on its own from [mdm-application-build](https://github.com/
 
 ## Usage
 
+### Source Data and User Requests Folder
+
+An API property `explorer.config.root_data_model_path` defines the location of the source Data Model i.e. the Data Model which the user browses, and from
+which they select Data Elements. For example, if the source Data Model is called 'Source' and is located in a folder 'F', this property
+must have a value of 'fo:F|dm:Source'.
+
+The following API properties are also required:
+- `explorer.config.root_request_folder` The name of a folder in the catalogue where all user requests will be stored. 
+- `explorer.config.profile_namespace` The namespace of the profile to use.
+- `explorer.config.profile_service_name` The profile name to use.
+
 ### Submitting data requests
 
 To successfully send data requests to an organisation, these API properties must be defined in your Mauro instance:
