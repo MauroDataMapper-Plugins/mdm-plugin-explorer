@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.research.rest.transport
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.rest.transport
 
 import grails.validation.Validateable
 import org.owasp.html.HtmlPolicyBuilder

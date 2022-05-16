@@ -15,12 +15,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.research.rest.transport.search.searchparamfilter
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.rest.transport.search.searchparamfilter
 
 import uk.ac.ox.softeng.maurodatamapper.core.hibernate.search.mapper.pojo.bridge.MetadataBridge
 import uk.ac.ox.softeng.maurodatamapper.core.rest.transport.search.SearchParams
 import uk.ac.ox.softeng.maurodatamapper.core.rest.transport.search.searchparamfilter.DateTimeSearchParamFilter
-import uk.ac.ox.softeng.maurodatamapper.plugins.research.ResearchDataElementProfileProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research.ResearchDataElementProfileProviderService
 
 import grails.plugins.hibernate.search.HibernateSearchApi
 import groovy.util.logging.Slf4j

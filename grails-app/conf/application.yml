@@ -15,7 +15,7 @@ maurodatamapper:
 grails:
     profile: rest-api-plugin
     codegen:
-        defaultPackage: uk.ac.ox.softeng.maurodatamapper.plugins.plugin_name
+        defaultPackage: uk.ac.ox.softeng.maurodatamapper.plugins.explorer
     gorm:
         reactor:
             # Whether to translate GORM events into Reactor events

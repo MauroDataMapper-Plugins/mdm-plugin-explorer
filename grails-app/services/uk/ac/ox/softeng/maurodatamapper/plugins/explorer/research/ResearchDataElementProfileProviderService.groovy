@@ -15,7 +15,7 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.research
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research
 
 import uk.ac.ox.softeng.maurodatamapper.profile.provider.JsonProfileProviderService
 
@@ -26,7 +26,7 @@ class ResearchDataElementProfileProviderService extends JsonProfileProviderServi
 
     @Override
     String getMetadataNamespace() {
-        'uk.ac.ox.softeng.maurodatamapper.plugins.research'
+        'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research'
     }
 
     @Override

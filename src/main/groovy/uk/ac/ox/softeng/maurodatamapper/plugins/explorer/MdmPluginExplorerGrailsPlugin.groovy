@@ -15,13 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.research
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.research.rest.transport.search.searchparamfilter.ResearchProfileFilter
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.rest.transport.search.searchparamfilter.ResearchProfileFilter
 
 import grails.plugins.Plugin
 
-class MdmPluginResearchGrailsPlugin extends Plugin {
+class MdmPluginExplorerGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = '5.1.7 > *'
@@ -31,12 +31,12 @@ class MdmPluginResearchGrailsPlugin extends Plugin {
     ]
 
     // TODO Fill in these fields
-    def title = "Mauro Data Mapper Researcher Rest Api Plugin"
+    def title = "Mauro Data Explorer Rest Api Plugin"
     // Headline display name of the plugin
     def author = "Aaron Forshaw"
     def authorEmail = "aaron@janda.org.uk"
     def description = '''\
-Controller for endpoints specific to researcher data access requests.
+Controller for endpoints specific to the mauro data explorer.
 '''
 
     // URL to the plugin's documentation
@@ -57,7 +57,7 @@ Controller for endpoints specific to researcher data access requests.
     def issueManagement = [system: "YouTrack", url: "https://maurodatamapper.myjetbrains.com"]
 
     // Online location of the plugin's browseable source code.
-    def scm = [url: "https://github.com/MauroDataMapper-Plugins/mdm-plugin-research"]
+    def scm = [url: "https://github.com/MauroDataMapper-Plugins/mdm-plugin-explorer"]
 
     def dependsOn = [
         mdmCore           : '5.2.0-SNAPSHOT > *',
