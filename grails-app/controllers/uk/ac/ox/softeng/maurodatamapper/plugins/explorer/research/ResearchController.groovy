@@ -20,6 +20,8 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiInternalException
 import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiProperty
 import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiPropertyService
+import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
+import uk.ac.ox.softeng.maurodatamapper.core.container.FolderService
 import uk.ac.ox.softeng.maurodatamapper.core.email.EmailService
 import uk.ac.ox.softeng.maurodatamapper.core.gorm.constraint.callable.VersionAwareConstraints
 import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.ResourcelessMdmController
@@ -28,8 +30,13 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.rest.transport.Contact
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUser
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
+import uk.ac.ox.softeng.maurodatamapper.security.UserGroup
+import uk.ac.ox.softeng.maurodatamapper.security.UserGroupService
+import uk.ac.ox.softeng.maurodatamapper.security.role.GroupRole
+import uk.ac.ox.softeng.maurodatamapper.security.role.SecurableResourceGroupRole
 import uk.ac.ox.softeng.maurodatamapper.version.VersionChangeType
 
+import grails.artefact.controller.RestResponder
 import grails.gorm.transactions.Transactional
 import grails.web.api.WebAttributes
 import groovy.util.logging.Slf4j
@@ -37,12 +44,14 @@ import groovy.util.logging.Slf4j
 import static uk.ac.ox.softeng.maurodatamapper.core.admin.ApiPropertyEnum.SITE_URL
 
 @Slf4j
-class ResearchController implements ResourcelessMdmController, WebAttributes {
+class ResearchController implements ResourcelessMdmController, RestResponder, WebAttributes {
 
     ApiPropertyService apiPropertyService
     CatalogueUserService catalogueUserService
     DataModelService dataModelService
     EmailService emailService
+    FolderService folderService
+    UserGroupService userGroupService
 
     final String APPROVAL_RECIPIENT_KEY = 'email.research.request.recipient'
     final String APPROVAL_EMAIL_SUBJECT_KEY = 'email.research.request.subject'
@@ -50,6 +59,7 @@ class ResearchController implements ResourcelessMdmController, WebAttributes {
     final String CONTACT_RECIPIENT_KEY = 'email.research.contact.recipient'
     final String CONTACT_EMAIL_SUBJECT_KEY = 'email.research.contact.subject'
     final String CONTACT_EMAIL_BODY_KEY = 'email.research.contact.body'
+    final String REQUEST_FOLDER = 'explorer.config.root_request_folder'
 
     /**
      * 'Submit' an access request by finalising the relevant Data Model and sending an email
@@ -109,5 +119,51 @@ class ResearchController implements ResourcelessMdmController, WebAttributes {
         emailService.sendEmailToUser(CONTACT_EMAIL_SUBJECT_KEY, CONTACT_EMAIL_BODY_KEY, recipientUser, propertiesMap)
 
         contact
+    }
+
+    /**
+     * Get or create a user folder within the 'Explorer Content' folder.
+     * 1. Use API Property to determine the parent folder which holds the individual user folders
+     * 2. If it doesn't already exist, create a user group with name equal to the user's email address e.g. myemail@example.com
+     * 3. If it doesn't already exists, create a folder called e.g. myemail[at]example.com. Add editor role for the folder to the user group
+     */
+    def userFolder() {
+        ApiProperty requestFolderLabel = apiPropertyService.findByKey(REQUEST_FOLDER)
+        if (!requestFolderLabel) throw new ApiInternalException("RC05", "API Property for REQUEST_FOLDER ${REQUEST_FOLDER} is " +
+                                                                        "not configured")
+
+        Folder requestFolder = folderService.findDomainByLabel(requestFolderLabel.value)
+        if (!requestFolder) throw new ApiInternalException("RC06", "Folder ${requestFolderLabel.value} not available")
+
+        // Create a user group from the user's email address if not already exists
+        String userGroupName = currentUser.emailAddress
+        UserGroup userGroup = userGroupService.findByName(userGroupName)
+
+        if (!userGroup) {
+            userGroup = userGroupService.generateAndSaveNewGroup(currentUser as CatalogueUser, userGroupName, 'User group for Explorer',
+                                                                 [currentUser] as List<CatalogueUser>)
+        }
+
+        // Does user folder exist?
+        String userFolderLabel = currentUser.emailAddress.replace("@", "[at]")
+        Folder userFolder = folderService.findByParentIdAndLabel(requestFolder.id, userFolderLabel)
+
+        if (!userFolder) {
+            // Create a folder
+            userFolder = new Folder(label: userFolderLabel, createdBy: currentUser.emailAddress)
+            requestFolder.addToChildFolders(userFolder)
+
+            folderService.save(requestFolder)
+
+            // Give the user's group editor access on the folder
+            userGroup.addToSecurableResourceGroupRoles(new SecurableResourceGroupRole(groupRole: GroupRole.findByName('editor'),
+                                                                                      securableResourceDomainType: userFolder.domainType,
+                                                                                      securableResourceId: userFolder.id,
+                                                                                      createdBy: currentUser.emailAddress))
+
+            userGroupService.save(userGroup)
+        }
+
+        respond(folder: userFolder, userSecurityPolicyManager: currentUserSecurityPolicyManager)
     }
 }

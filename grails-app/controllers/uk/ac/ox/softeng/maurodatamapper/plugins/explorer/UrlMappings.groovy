@@ -23,6 +23,7 @@ class UrlMappings {
         group '/api', {
             put "/researchAccessRequest/$dataModelId"(controller: 'research', action: 'submit')
             post "/contact"(controller: 'research', action: 'contact')
+            post "/userFolder"(controller: 'research', action: 'userFolder')
         }
     }
 }
