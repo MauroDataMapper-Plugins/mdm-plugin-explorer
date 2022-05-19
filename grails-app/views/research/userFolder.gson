@@ -1,9 +1,0 @@
-import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
-import uk.ac.ox.softeng.maurodatamapper.security.UserSecurityPolicyManager
-
-model {
-    Folder folder
-    UserSecurityPolicyManager userSecurityPolicyManager
-}
-
-json tmpl.folder_full(folder: folder, userSecurityPolicyManager: userSecurityPolicyManager)

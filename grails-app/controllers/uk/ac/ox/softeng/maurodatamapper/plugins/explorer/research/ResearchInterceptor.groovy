@@ -45,11 +45,6 @@ class ResearchInterceptor extends TieredAccessSecurableResourceInterceptor {
      */
     boolean before() {
 
-        // Ability to create a user folder is available to any authenticated user
-        if (['userFolder'].contains(actionName)) {
-            return currentUserSecurityPolicyManager.isAuthenticated()
-        }
-
         // Contact form available for any user
         if (['contact'].contains(actionName)) {
             return true

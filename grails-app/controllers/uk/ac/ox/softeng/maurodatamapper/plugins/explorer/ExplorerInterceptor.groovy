@@ -17,16 +17,19 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
-class UrlMappings {
+import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.MdmInterceptor
 
-    static mappings = {
-        group '/api', {
-            put "/researchAccessRequest/$dataModelId"(controller: 'research', action: 'submit')
-            post "/contact"(controller: 'research', action: 'contact')
+class ExplorerInterceptor implements MdmInterceptor {
 
-            group '/explorer', {
-                post "/userFolder"(controller: 'explorer', action: 'userFolder')
+    boolean before() {
+
+        // Ability to create a user folder is available to any authenticated user
+        if (['userFolder'].contains(actionName)) {
+            if (currentUserSecurityPolicyManager.isAuthenticated()) {
+                return true
             }
         }
+
+        forbiddenDueToNotAuthenticated()
     }
 }
