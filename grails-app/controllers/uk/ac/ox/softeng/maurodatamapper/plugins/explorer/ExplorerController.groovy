@@ -24,11 +24,12 @@ import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.core.container.FolderService
 import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.ResourcelessMdmController
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUser
+import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
+import uk.ac.ox.softeng.maurodatamapper.security.SecurityPolicyManagerService
 import uk.ac.ox.softeng.maurodatamapper.security.UserGroup
 import uk.ac.ox.softeng.maurodatamapper.security.UserGroupService
 import uk.ac.ox.softeng.maurodatamapper.security.role.GroupRole
 import uk.ac.ox.softeng.maurodatamapper.security.role.GroupRoleService
-import uk.ac.ox.softeng.maurodatamapper.security.role.SecurableResourceGroupRole
 import uk.ac.ox.softeng.maurodatamapper.security.role.SecurableResourceGroupRoleService
 
 import grails.artefact.controller.RestResponder
@@ -36,15 +37,20 @@ import grails.web.api.WebAttributes
 import groovy.util.logging.Slf4j
 
 import grails.gorm.transactions.Transactional
+import org.springframework.beans.factory.annotation.Autowired
 
 @Slf4j
 class ExplorerController implements ResourcelessMdmController, RestResponder, WebAttributes {
 
     ApiPropertyService apiPropertyService
+    CatalogueUserService catalogueUserService
     FolderService folderService
     GroupRoleService groupRoleService
     UserGroupService userGroupService
     SecurableResourceGroupRoleService securableResourceGroupRoleService
+
+    @Autowired(required = false)
+    SecurityPolicyManagerService securityPolicyManagerService
 
     final String REQUEST_FOLDER = 'explorer.config.root_request_folder'
 
@@ -69,29 +75,29 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
 
         if (!userFolder) {
             // Create a user group from the user's email address if not already exists
-            String userGroupName = "${currentUser.getEmailAddress()} Explorer Group"
+            String userGroupName = "${userFolderLabel} Explorer Group"
             UserGroup userGroup = userGroupService.findByName(userGroupName)
+            CatalogueUser catalogueUser = catalogueUserService.get(currentUser.id)
 
             if (!userGroup) {
-                userGroup = new UserGroup(createdBy: currentUser.emailAddress, name: userGroupName, description: 'User group for Explorer')
-                userGroup.addToGroupMembers(currentUser)
-                userGroupService.save(userGroup)
                 // New user group is saved and flushed
-                //userGroup = userGroupService.generateAndSaveNewGroup(currentUser as CatalogueUser, userGroupName, 'User group for Explorer')
+                userGroup = userGroupService.generateAndSaveNewGroup(catalogueUser, userGroupName, 'User group for Explorer')
             }
 
             // Create a folder
             userFolder = new Folder(label: userFolderLabel, createdBy: currentUser.emailAddress, parentFolder: requestFolder)
-            //folderService.save(userFolder)
-            userFolder.save()
+            folderService.save(userFolder)
 
             securableResourceGroupRoleService.createAndSaveSecurableResourceGroupRole(
                 userFolder,
                 groupRoleService.getFromCache(GroupRole.EDITOR_ROLE_NAME).groupRole,
                 userGroup,
-                currentUser as CatalogueUser)
+                catalogueUser)
 
-
+            if (securityPolicyManagerService) {
+                currentUserSecurityPolicyManager =
+                    securityPolicyManagerService.addSecurityForSecurableResource(userFolder, currentUser, userFolder.label)
+            }
         }
 
         respond userFolder, view: '/folder/show', model: [folder: userFolder, userSecurityPolicyManager:
