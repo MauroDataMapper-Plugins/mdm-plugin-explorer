@@ -18,7 +18,6 @@
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.test.functional.BaseFunctionalSpec
 
 import grails.gorm.transactions.Transactional
@@ -31,7 +30,8 @@ import static io.micronaut.http.HttpStatus.NO_CONTENT
 import static io.micronaut.http.HttpStatus.OK
 
 /**
- * @see uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research.ResearchController*  | PUT   | /api/researchAccessRequest       | Action: submit
+ * @see uk.ac.ox.softeng.maurodatamapper.plugins.explorer.ExplorerController*
+ * | POST   | /api/explorer/userFolder      | Action: userFolder
  * |
  */
 @Integration
@@ -42,7 +42,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
     @Transactional
     def cleanupSpec() {
         log.debug('CleanupSpec ExplorerFunctionalSpec')
-        cleanUpResources(DataModel, Folder)
+        Folder.findByLabel('admin[at]maurodatamapper.com').delete(flush: true)
     }
 
     @Override
