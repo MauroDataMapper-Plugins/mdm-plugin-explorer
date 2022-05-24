@@ -5,6 +5,7 @@ dependencies {
     }
 
     testImplementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-testing-framework', version: mdmCoreVersion
+    integrationTestImplementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-plugin-authentication-basic', version: mdmCoreVersion
 
     // Postgres database
     runtimeOnly group: 'org.flywaydb', name: 'flyway-core'
