@@ -394,64 +394,75 @@ class SearchFunctionalSpec extends BaseFunctionalSpec implements SecurityDefinit
         }
       ],
       "profileFields": [
-        {
-          "fieldName": "Identifiable Data",
-          "metadataPropertyName": "identifiableData",
-          "currentValue": "Identifying",
-          "dataType": "enumeration",
-          "allowedValues": [
-            "Legally Restricted",
-            "Identifying",
-            "Pseudonymised",
-            "Maybe identifying",
-            "Anonymous"
-          ]
-        },
-        {
-          "fieldName": "More details...",
-          "metadataPropertyName": "identifiableDetails",
-          "currentValue": "",
-          "dataType": "text"
-        },
-        {
-          "fieldName": "Source System",
-          "metadataPropertyName": "sourceSystem",
-          "currentValue": "modules",
-          "dataType": "string"
-        },
-        {
-          "fieldName": "Target Dataset",
-          "metadataPropertyName": "targetDataset",
-          "currentValue": "",
-          "dataType": "string"
-        },
-        {
-          "fieldName": "Terminology",
-          "metadataPropertyName": "terminology",
-          "currentValue": "",
-          "dataType": "string"
-        },
-        {
-          "fieldName": "Data Dictionary Item",
-          "metadataPropertyName": "dataDictionaryItem",
-          "currentValue": "https://nhsdd/birthdate",
-          "dataType": "string"
-        },
-        {
-          "fieldName": "Last Update",
-          "metadataPropertyName": "lastUpdated",
-          "currentValue": "25/02/2022",
-          "dataType": "date"
-        },
-        {
-          "fieldName": "Database Name",
-          "metadataPropertyName": "databaseName",
-          "currentValue": "date_of_birth",
-          "dataType": "string"
-        }
-      ]
-    }
-  ]
+      {
+        "fieldName":"Identifiable Data",
+        "metadataPropertyName":"identifiableData",
+        "currentValue":"Identifying",
+        "dataType":"enumeration",
+        "allowedValues":["Legally Restricted","Identifying","Pseudonymised","Maybe identifying","Anonymous"]
+      },
+      {
+        "fieldName":"More details...",
+        "metadataPropertyName":"identifiableDetails",
+        "currentValue":"",
+        "dataType":"text"
+      },
+      {
+        "fieldName":"Source System",
+        "metadataPropertyName":"sourceSystem",
+        "currentValue":"modules",
+        "dataType":"enumeration",
+        "allowedValues":["ARIA (MedOnc)","ARIA (RadOnc)","Hicom","Orbit","Solus","SEND","Philips CareVue","BloodTrack","BadgerNet","InfoFlex","Janus","Xcelera","Xcelera Echo","ENDOBASE"]
+      },
+      {
+        "fieldName":"Target Dataset",
+        "metadataPropertyName":"targetDataset",
+        "currentValue":"",
+        "dataType":"enumeration",
+        "allowedValues":["SUS","COSD","COSD Pathology","RTDS","SACT"]
+      },
+      {
+        "fieldName":"Terminology",
+        "metadataPropertyName":"terminology",
+        "currentValue":"",
+        "dataType":"enumeration",
+        "allowedValues":["SNOMED-CT","ICD-9","ICD-10","OPCS"]
+      },
+      {
+        "fieldName":"Data Dictionary Item",
+        "metadataPropertyName":"dataDictionaryItem",
+        "currentValue":"https://nhsdd/birthdate",
+        "dataType":"string"
+      },
+      {
+        "fieldName":"Sector of Care",
+        "metadataPropertyName":"careSector",
+        "currentValue":"",
+        "dataType":"enumeration",
+        "allowedValues":["Primary","Secondary","Tertiary"]
+      },
+      {
+        "fieldName":"Admission Route",
+        "metadataPropertyName":"admissionRoute",
+        "currentValue":"",
+        "dataType":"enumeration",
+        "allowedValues":["Emergency","Maternity","In-patient","Out-patient"]
+      },
+      {
+        "fieldName":"Last Update",
+        "metadataPropertyName":"lastUpdated",
+        "currentValue":"25/02/2022",
+        "dataType":"date"
+      },
+      {
+        "fieldName":"Database Name",
+        "metadataPropertyName":"databaseName",
+        "currentValue":"date_of_birth",
+        "dataType":"string"
+      }
+    ]
+  }
+]
 }''')
 
         when:
@@ -510,25 +521,77 @@ class SearchFunctionalSpec extends BaseFunctionalSpec implements SecurityDefinit
           "fieldName": "Source System",
           "metadataPropertyName": "sourceSystem",
           "currentValue": "modules",
-          "dataType": "string"
+          "dataType": "enumeration",
+          "allowedValues": [
+            "ARIA (MedOnc)",
+            "ARIA (RadOnc)",
+            "Hicom",
+            "Orbit",
+            "Solus",
+            "SEND",
+            "Philips CareVue",
+            "BloodTrack",
+            "BadgerNet",
+            "InfoFlex",
+            "Janus",
+            "Xcelera",
+            "Xcelera Echo",
+            "ENDOBASE"
+          ]
         },
         {
           "fieldName": "Target Dataset",
           "metadataPropertyName": "targetDataset",
           "currentValue": "hic",
-          "dataType": "string"
+          "dataType": "enumeration",
+          "allowedValues": [
+            "SUS",
+            "COSD",
+            "COSD Pathology",
+            "RTDS",
+            "SACT"
+          ]
         },
         {
           "fieldName": "Terminology",
           "metadataPropertyName": "terminology",
           "currentValue": "",
-          "dataType": "string"
+          "dataType": "enumeration",
+          "allowedValues": [
+            "SNOMED-CT",
+            "ICD-9",
+            "ICD-10",
+            "OPCS"
+          ]
         },
         {
           "fieldName": "Data Dictionary Item",
           "metadataPropertyName": "dataDictionaryItem",
           "currentValue": "",
           "dataType": "string"
+        },
+        {
+          "fieldName": "Sector of Care",
+          "metadataPropertyName": "careSector",
+          "currentValue": "",
+          "dataType": "enumeration",
+          "allowedValues": [
+            "Primary",
+            "Secondary",
+            "Tertiary"
+          ]
+        },
+        {
+          "fieldName": "Admission Route",
+          "metadataPropertyName": "admissionRoute",
+          "currentValue": "",
+          "dataType": "enumeration",
+          "allowedValues": [
+            "Emergency",
+            "Maternity",
+            "In-patient",
+            "Out-patient"
+          ]
         },
         {
           "fieldName": "Last Update",
@@ -586,25 +649,77 @@ class SearchFunctionalSpec extends BaseFunctionalSpec implements SecurityDefinit
           "fieldName": "Source System",
           "metadataPropertyName": "sourceSystem",
           "currentValue": "modules",
-          "dataType": "string"
+          "dataType": "enumeration",
+          "allowedValues": [
+            "ARIA (MedOnc)",
+            "ARIA (RadOnc)",
+            "Hicom",
+            "Orbit",
+            "Solus",
+            "SEND",
+            "Philips CareVue",
+            "BloodTrack",
+            "BadgerNet",
+            "InfoFlex",
+            "Janus",
+            "Xcelera",
+            "Xcelera Echo",
+            "ENDOBASE"
+          ]
         },
         {
           "fieldName": "Target Dataset",
           "metadataPropertyName": "targetDataset",
           "currentValue": "hic",
-          "dataType": "string"
+          "dataType": "enumeration",
+          "allowedValues": [
+            "SUS",
+            "COSD",
+            "COSD Pathology",
+            "RTDS",
+            "SACT"
+          ]
         },
         {
           "fieldName": "Terminology",
           "metadataPropertyName": "terminology",
           "currentValue": "",
-          "dataType": "string"
+          "dataType": "enumeration",
+          "allowedValues": [
+            "SNOMED-CT",
+            "ICD-9",
+            "ICD-10",
+            "OPCS"
+          ]
         },
         {
           "fieldName": "Data Dictionary Item",
           "metadataPropertyName": "dataDictionaryItem",
           "currentValue": "",
           "dataType": "string"
+        },
+        {
+          "fieldName": "Sector of Care",
+          "metadataPropertyName": "careSector",
+          "currentValue": "",
+          "dataType": "enumeration",
+          "allowedValues": [
+            "Primary",
+            "Secondary",
+            "Tertiary"
+          ]
+        },
+        {
+          "fieldName": "Admission Route",
+          "metadataPropertyName": "admissionRoute",
+          "currentValue": "",
+          "dataType": "enumeration",
+          "allowedValues": [
+            "Emergency",
+            "Maternity",
+            "In-patient",
+            "Out-patient"
+          ]
         },
         {
           "fieldName": "Last Update",
