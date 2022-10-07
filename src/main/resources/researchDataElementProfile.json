@@ -32,7 +32,9 @@
         "description": "The source system that this field originated from",
         "minMultiplicity": 0,
         "maxMultiplicity": 1,
-        "dataType": "string"
+        "dataType": "enumeration",
+        "allowedValues": ["ARIA (MedOnc)", "ARIA (RadOnc)", "Hicom", "Orbit", "Solus", "SEND", "Philips CareVue", "BloodTrack",
+          "BadgerNet", "InfoFlex", "Janus", "Xcelera", "Xcelera Echo", "ENDOBASE"]
       },
       {
         "fieldName": "Target Dataset",
@@ -40,7 +42,8 @@
         "description": "Any research or national datasets that this field is also used for",
         "minMultiplicity": 0,
         "maxMultiplicity": 1,
-        "dataType": "string"
+        "dataType": "enumeration",
+        "allowedValues": ["SUS", "COSD", "COSD Pathology", "RTDS", "SACT"]
       },
       {
         "fieldName": "Terminology",
@@ -48,7 +51,8 @@
         "description": "The name of any terminology that data from this field is taken from - e.g. SNOMED or ICD-10",
         "minMultiplicity": 0,
         "maxMultiplicity": 1,
-        "dataType": "string"
+        "dataType": "enumeration",
+        "allowedValues": ["SNOMED-CT", "ICD-9", "ICD-10", "OPCS"]
       },
       {
         "fieldName": "Data Dictionary Item",
@@ -57,6 +61,24 @@
         "minMultiplicity": 0,
         "maxMultiplicity": 1,
         "dataType": "string"
+      },
+      {
+        "fieldName": "Sector of Care",
+        "metadataPropertyName": "careSector",
+        "description": "Whether this field is collected as part of Primary, Secondary or Tertiary care",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "enumeration",
+        "allowedValues": ["Primary", "Secondary", "Tertiary"]
+      },
+      {
+        "fieldName": "Admission Route",
+        "metadataPropertyName": "admissionRoute",
+        "description": "The route of admission where this field is collected (where applicable)",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "enumeration",
+        "allowedValues": ["Emergency", "Maternity", "In-patient", "Out-patient"]
       }
     ]
   },
