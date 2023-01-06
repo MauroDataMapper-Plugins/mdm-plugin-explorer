@@ -15,23 +15,23 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.querybuilder
 
 import uk.ac.ox.softeng.maurodatamapper.profile.provider.JsonProfileProviderService
 
 import groovy.util.logging.Slf4j
 
 @Slf4j
-class ResearchDataElementProfileProviderService extends JsonProfileProviderService {
+class QueryBuilderPrimitiveTypeProfileProviderService extends JsonProfileProviderService {
 
     @Override
     String getMetadataNamespace() {
-        'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research'
+        'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.querybuilder'
     }
 
     @Override
     String getDisplayName() {
-        'Mauro Data Explorer - Data Element'
+        'Mauro Data Explorer - Query Builder Data Type'
     }
 
     @Override
@@ -41,14 +41,11 @@ class ResearchDataElementProfileProviderService extends JsonProfileProviderServi
 
     @Override
     String getJsonResourceFile() {
-        return 'researchDataElementProfile.json'
+        return 'queryBuilderPrimitiveTypeProfile.json'
     }
 
     @Override
     List<String> profileApplicableForDomains() {
-        return ['DataElement']
+        return ['PrimitiveType']
     }
-
-
-
 }
