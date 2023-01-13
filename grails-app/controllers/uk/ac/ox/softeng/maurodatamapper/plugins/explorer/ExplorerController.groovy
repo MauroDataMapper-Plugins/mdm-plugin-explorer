@@ -53,6 +53,7 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
     SecurityPolicyManagerService securityPolicyManagerService
 
     final String REQUEST_FOLDER = 'explorer.config.root_request_folder'
+    final String TEMPLATE_FOLDER = 'explorer.config.root_template_folder'
 
     /**
      * Get or create a user folder within the 'Explorer Content' folder.
@@ -101,6 +102,22 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
         }
 
         respond userFolder, view: '/folder/show', model: [folder: userFolder, userSecurityPolicyManager:
+            currentUserSecurityPolicyManager]
+    }
+
+    /**
+     * Get the root folder holding template requests
+     * @return A Folder object
+     */
+    def templateFolder() {
+        ApiProperty templateFolderLabel = apiPropertyService.findByKey(TEMPLATE_FOLDER)
+        if (!templateFolderLabel) throw new ApiInternalException("RC05", "API Property for TEMPLATE_FOLDER ${TEMPLATE_FOLDER} is " +
+                                                                        "not configured")
+
+        Folder templateFolder = folderService.findDomainByLabel(templateFolderLabel.value)
+        if (!templateFolder) throw new ApiInternalException("RC06", "Folder ${templateFolderLabel.value} not available")
+
+        respond templateFolder, view: '/folder/show', model: [folder: templateFolder, userSecurityPolicyManager:
             currentUserSecurityPolicyManager]
     }
 }
