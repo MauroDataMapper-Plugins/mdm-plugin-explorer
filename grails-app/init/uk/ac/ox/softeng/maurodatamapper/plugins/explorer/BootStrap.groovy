@@ -53,22 +53,51 @@ class BootStrap implements SecurityDefinition {
 
     def init = {servletContext ->
         log.debug('Starting main bootstrap')
+
+        def explorerReadersGroupRoleName = 'Explorer Readers'
+
         CatalogueUser.withNewTransaction {
             admin = CatalogueUser.findByEmailAddress(StandardEmailAddress.ADMIN)
-            UserGroup explorerReaders = UserGroup.findByName('Explorer Readers')
+            UserGroup explorerReaders = UserGroup.findByName(explorerReadersGroupRoleName)
             if (!explorerReaders) {
                 explorerReaders = new UserGroup(createdBy: StandardEmailAddress.ADMIN,
-                                                name: 'Explorer Readers',
+                                                name: explorerReadersGroupRoleName,
                                                 undeleteable: false)
                     .addToGroupMembers(admin)
                 checkAndSave(messageSource, explorerReaders)
             }
         }
 
+        def apiPropertyCategory = 'Mauro Data Explorer'
+        def requestFolderName = 'Mauro Data Explorer Requests'
+        def templateFolderName = 'Mauro Data Explorer Templates'
+
         Folder.withNewTransaction {
-            if (Folder.countByLabel('Explorer Content') == 0) {
-                Folder folder = new Folder(label: 'Explorer Content', createdBy: StandardEmailAddress.ADMIN)
+            if (Folder.countByLabel(requestFolderName) == 0) {
+                Folder folder = new Folder(label: requestFolderName, createdBy: StandardEmailAddress.ADMIN)
                 checkAndSave(messageSource, folder)
+            }
+        }
+
+        Folder.withNewTransaction {
+            if (Folder.countByLabel(templateFolderName) == 0) {
+                Folder folder = new Folder(label: templateFolderName, createdBy: StandardEmailAddress.ADMIN)
+                checkAndSave(messageSource, folder)
+            }
+        }
+
+        SecurableResourceGroupRole.withNewTransaction {
+            UserGroup explorerReaders = UserGroup.findByName(explorerReadersGroupRoleName)
+            def readerGroupRole = groupRoleService.getFromCache(GroupRole.READER_ROLE_NAME).groupRole
+            def templateFolder = Folder.findByLabel(templateFolderName)
+
+            if (SecurableResourceGroupRole.bySecurableResourceAndGroupRoleIdAndUserGroupId(templateFolder, readerGroupRole.id, explorerReaders.id).count() == 0) {
+                checkAndSave(messageSource, new SecurableResourceGroupRole(
+                    createdBy: StandardEmailAddress.ADMIN,
+                    securableResource: templateFolder,
+                    userGroup: explorerReaders,
+                    groupRole: readerGroupRole
+                ))
             }
         }
 
@@ -77,7 +106,7 @@ class BootStrap implements SecurityDefinition {
                 ApiProperty rootPath = new ApiProperty(key: 'explorer.config.root_data_model_path',
                                                        value: 'NOT SET',
                                                        publiclyVisible: true,
-                                                       category: 'Mauro Data Explorer',
+                                                       category: apiPropertyCategory,
                                                        lastUpdatedBy: StandardEmailAddress.ADMIN,
                                                        createdBy: StandardEmailAddress.ADMIN)
                 checkAndSave(messageSource, rootPath)
@@ -85,9 +114,19 @@ class BootStrap implements SecurityDefinition {
 
             if (ApiProperty.countByKey('explorer.config.root_request_folder') == 0) {
                 ApiProperty requestFolder = new ApiProperty(key: 'explorer.config.root_request_folder',
-                                                            value: 'Explorer Content',
+                                                            value: requestFolderName,
                                                             publiclyVisible: true,
-                                                            category: 'Mauro Data Explorer',
+                                                            category: apiPropertyCategory,
+                                                            lastUpdatedBy: StandardEmailAddress.ADMIN,
+                                                            createdBy: StandardEmailAddress.ADMIN)
+                checkAndSave(messageSource, requestFolder)
+            }
+
+            if (ApiProperty.countByKey('explorer.config.root_template_folder') == 0) {
+                ApiProperty requestFolder = new ApiProperty(key: 'explorer.config.root_template_folder',
+                                                            value: templateFolderName,
+                                                            publiclyVisible: true,
+                                                            category: apiPropertyCategory,
                                                             lastUpdatedBy: StandardEmailAddress.ADMIN,
                                                             createdBy: StandardEmailAddress.ADMIN)
                 checkAndSave(messageSource, requestFolder)
@@ -97,7 +136,7 @@ class BootStrap implements SecurityDefinition {
                 ApiProperty profileNamespace = new ApiProperty(key: 'explorer.config.profile_namespace',
                                                                value: 'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research',
                                                                publiclyVisible: true,
-                                                               category: 'Mauro Data Explorer',
+                                                               category: apiPropertyCategory,
                                                                lastUpdatedBy: StandardEmailAddress.ADMIN,
                                                                createdBy: StandardEmailAddress.ADMIN)
                 checkAndSave(messageSource, profileNamespace)
@@ -107,7 +146,7 @@ class BootStrap implements SecurityDefinition {
                 ApiProperty profileName = new ApiProperty(key: 'explorer.config.profile_service_name',
                                                           value: 'ResearchDataElementProfileProviderService',
                                                           publiclyVisible: true,
-                                                          category: 'Mauro Data Explorer',
+                                                          category: apiPropertyCategory,
                                                           lastUpdatedBy: StandardEmailAddress.ADMIN,
                                                           createdBy: StandardEmailAddress.ADMIN)
                 checkAndSave(messageSource, profileName)

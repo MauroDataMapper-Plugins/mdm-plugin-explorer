@@ -31,6 +31,15 @@ The following API properties are also required:
 - `explorer.config.profile_namespace` The namespace of the profile to use.
 - `explorer.config.profile_service_name` The profile name to use.
 
+### Request Templates Folder
+
+A folder is automatically bootstrapped called "Mauro Data Explorer Templates", which is provided to store optional template requests to base user requests
+on. The folder is also setup to use the user group "Explorer Readers" with the "readers" access level to ensure a correct securable resource. No standard
+template requests are provided though, these must be created by an administrator.
+
+The location of this template folder is stored in the `explorer.config.root_template_folder` API property. If you use a different folder, ensure that this
+API property is also updated.
+
 ### Submitting data requests
 
 To successfully send data requests to an organisation, these API properties must be defined in your Mauro instance:
