@@ -42,7 +42,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
     @Transactional
     def cleanupSpec() {
         log.debug('CleanupSpec ExplorerFunctionalSpec')
-        Folder.findByLabel('admin[at]maurodatamapper.com').delete(flush: true)
+        Folder.findByLabel('admin[at]maurodatamapper.com')?.delete(flush: true)
     }
 
     @Override
@@ -98,5 +98,51 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse OK, response
         response.body().id
         response.body().label == 'admin[at]maurodatamapper.com'
+    }
+
+    void 'test get template folder when logged out'() {
+        given:
+        logout()
+
+        when: 'get the folder'
+        GET("/templateFolder")
+
+        then:
+        verifyResponse FORBIDDEN, response
+    }
+
+    void 'test get template folder when logged in'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+
+        when: 'get the folder'
+        GET("/templateFolder")
+
+        then:
+        verifyResponse OK, response
+        response.body().id
+        response.body().label == 'Mauro Data Explorer Templates'
+    }
+
+    void 'test template folder has correct securable resource group role'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+
+        when: 'get the folder'
+        GET("/templateFolder")
+
+        then:
+        verifyResponse OK, response
+        def folder = response.body()
+
+        when: 'get the securable resource group role'
+        GET("${folder.domainType}/${folder.id}/securableResourceGroupRoles", MAP_ARG, true)
+
+        then:
+        verifyResponse OK, response
+        //noinspection GroovyAssignabilityCheck
+        def securableResource = response.body().items[0]
+        securableResource.groupRole.name == 'reader'
+        securableResource.userGroup.name == 'Explorer Readers'
     }
 }

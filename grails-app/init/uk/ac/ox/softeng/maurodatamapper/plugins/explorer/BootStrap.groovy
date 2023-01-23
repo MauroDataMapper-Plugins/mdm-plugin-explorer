@@ -91,7 +91,7 @@ class BootStrap implements SecurityDefinition {
             def readerGroupRole = groupRoleService.getFromCache(GroupRole.READER_ROLE_NAME).groupRole
             def templateFolder = Folder.findByLabel(templateFolderName)
 
-            if (SecurableResourceGroupRole.bySecurableResourceAndGroupRoleIdAndUserGroupId(templateFolder, readerGroupRole.id, explorerReaders.id).count() === 0) {
+            if (SecurableResourceGroupRole.bySecurableResourceAndGroupRoleIdAndUserGroupId(templateFolder, readerGroupRole.id, explorerReaders.id).count() == 0) {
                 checkAndSave(messageSource, new SecurableResourceGroupRole(
                     createdBy: StandardEmailAddress.ADMIN,
                     securableResource: templateFolder,
