@@ -17,17 +17,28 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
+import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiPropertyService
+import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
+import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
 import uk.ac.ox.softeng.maurodatamapper.test.functional.BaseFunctionalSpec
 
 import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
+import grails.testing.spock.RunOnce
 import groovy.util.logging.Slf4j
 import io.micronaut.http.HttpResponse
+import spock.lang.Shared
+
+import static uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress.getFUNCTIONAL_TEST
 
 import static io.micronaut.http.HttpStatus.FORBIDDEN
+import static io.micronaut.http.HttpStatus.NOT_FOUND
 import static io.micronaut.http.HttpStatus.NO_CONTENT
 import static io.micronaut.http.HttpStatus.OK
+import static io.micronaut.http.HttpStatus.INTERNAL_SERVER_ERROR
 
 /**
  * @see uk.ac.ox.softeng.maurodatamapper.plugins.explorer.ExplorerController*
@@ -38,6 +49,30 @@ import static io.micronaut.http.HttpStatus.OK
 @Slf4j
 class ExplorerFunctionalSpec extends BaseFunctionalSpec {
 
+    @Shared
+    Folder rootFolder
+
+    @Shared
+    Folder childFolder
+
+    @Shared
+    DataModel rootDataModel
+
+    ApiPropertyService apiPropertyService
+    CatalogueUserService catalogueUserService
+
+    @RunOnce
+    @Transactional
+    def setup() {
+        log.debug('Check and setup test data')
+        rootFolder = new Folder(label: 'Explorer Functional Folder', createdBy: FUNCTIONAL_TEST).save()
+        childFolder = new Folder(label: 'fake root model', createdBy: FUNCTIONAL_TEST, parentFolder: rootFolder).save()
+        rootDataModel = new DataModel(createdBy: FUNCTIONAL_TEST,
+                                      label: 'Explorer Functional Root Data Model',
+                                      folder: rootFolder,
+                                      type: DataModelType.DATA_ASSET,
+                                      authority: Authority.findByDefaultAuthority(true)).save()
+    }
 
     @Transactional
     def cleanupSpec() {
@@ -66,6 +101,12 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         ], MAP_ARG, true)
         verifyResponse(OK, response)
         response
+    }
+
+    void updateApiProperty(String key, String value) {
+        log.trace("Setting API property '${key}' to '${value}'")
+        def adminUser = catalogueUserService.findByEmailAddress('admin@maurodatamapper.com')
+        apiPropertyService.findAndUpdateByKey(key, value, adminUser)
     }
 
     void 'test create and get user folder when logged out'() {
@@ -144,5 +185,67 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         def securableResource = response.body().items[0]
         securableResource.groupRole.name == 'reader'
         securableResource.userGroup.name == 'Explorer Readers'
+    }
+
+    void 'test get root data model when logged out'() {
+        given:
+        logout()
+
+        when: 'get the root data model'
+        GET("/rootDataModel")
+
+        then:
+        verifyResponse FORBIDDEN, response
+    }
+
+    void 'test root data model is not set'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+
+        when: 'get the root data model'
+        GET("/rootDataModel")
+
+        then:
+        verifyResponse INTERNAL_SERVER_ERROR, response
+        response.body().exception.message.contains('has no value')
+    }
+
+    void 'test root data mode is not found'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+        updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|dm:root model")
+
+        when: 'get the root data model'
+        GET("/rootDataModel")
+
+        then:
+        verifyResponse NOT_FOUND, response
+    }
+
+    void 'test root data model is not a data model'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+        updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|fo:${childFolder.label}")
+
+        when: 'get the root data model'
+        GET("/rootDataModel")
+
+        then:
+        verifyResponse INTERNAL_SERVER_ERROR, response
+        response.body().exception.message.contains('is not a Data Model')
+    }
+
+    void 'test get root data model'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+        updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|dm:${rootDataModel.label}")
+
+        when: 'get the root data model'
+        GET("/rootDataModel")
+
+        then:
+        verifyResponse OK, response
+        response.body().id
+        response.body().label == rootDataModel.label
     }
 }

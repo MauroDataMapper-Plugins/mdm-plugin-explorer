@@ -24,7 +24,7 @@ also run the backend on its own from [mdm-application-build](https://github.com/
 
 An API property `explorer.config.root_data_model_path` defines the location of the source Data Model i.e. the Data Model which the user browses, and from
 which they select Data Elements. For example, if the source Data Model is called 'Source' and is located in a folder 'F', this property
-must have a value of 'fo:F|dm:Source'.
+must have a value of 'fo:F|dm:Source'. You can retrieve this root data model using the endpoint `GET /explorer/rootDataModel`.
 
 The following API properties are also required:
 - `explorer.config.root_request_folder` The name of a folder in the catalogue where all user requests will be stored. 
