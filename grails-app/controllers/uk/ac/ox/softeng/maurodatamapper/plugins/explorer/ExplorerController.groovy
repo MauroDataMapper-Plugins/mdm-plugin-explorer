@@ -22,7 +22,9 @@ import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiProperty
 import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiPropertyService
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.core.container.FolderService
+import uk.ac.ox.softeng.maurodatamapper.core.path.PathService
 import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.ResourcelessMdmController
+import uk.ac.ox.softeng.maurodatamapper.path.Path
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUser
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
 import uk.ac.ox.softeng.maurodatamapper.security.SecurityPolicyManagerService
@@ -32,6 +34,7 @@ import uk.ac.ox.softeng.maurodatamapper.security.role.GroupRole
 import uk.ac.ox.softeng.maurodatamapper.security.role.GroupRoleService
 import uk.ac.ox.softeng.maurodatamapper.security.role.SecurableResourceGroupRoleService
 
+import grails.artefact.DomainClass
 import grails.artefact.controller.RestResponder
 import grails.web.api.WebAttributes
 import groovy.util.logging.Slf4j
@@ -48,12 +51,14 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
     GroupRoleService groupRoleService
     UserGroupService userGroupService
     SecurableResourceGroupRoleService securableResourceGroupRoleService
+    PathService pathService
 
     @Autowired(required = false)
     SecurityPolicyManagerService securityPolicyManagerService
 
     final String REQUEST_FOLDER = 'explorer.config.root_request_folder'
     final String TEMPLATE_FOLDER = 'explorer.config.root_template_folder'
+    final String ROOT_DATA_MODEL = 'explorer.config.root_data_model_path'
 
     /**
      * Get or create a user folder within the 'Explorer Content' folder.
@@ -119,5 +124,27 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
 
         respond templateFolder, view: '/folder/show', model: [folder: templateFolder, userSecurityPolicyManager:
             currentUserSecurityPolicyManager]
+    }
+
+    /**
+     * Get the root data model for the explorer. This is defined by the API property 'explorer.config.root_data_model_path'
+     * @return A data model resource
+     */
+    def rootDataModel() {
+        ApiProperty rootDataModelPath = apiPropertyService.findByKey(ROOT_DATA_MODEL)
+        if (!rootDataModelPath) throw new ApiInternalException("RC05", "API Property for ROOT_DATA_MODEL ${ROOT_DATA_MODEL} is " +
+                                                                       "not configured")
+
+        if (!rootDataModelPath.value || rootDataModelPath.value == 'NOT SET')
+            throw new ApiInternalException("RC07", "API Property for ROOT_DATA_MODEL ${ROOT_DATA_MODEL} has no value")
+
+        def path = Path.from(rootDataModelPath.value)
+        def rootModel = pathService.findResourceByPathFromRootClass(Folder, path, currentUserSecurityPolicyManager)
+
+        if (!rootModel) return notFound(DomainClass, rootDataModelPath.value)
+
+        if (rootModel.domainType != 'DataModel') throw new ApiInternalException("RC08", "ROOT_DATA_MODEL ${ROOT_DATA_MODEL} is not a Data Model")
+
+        respond rootModel, view: '/dataModel/show', model: [dataModel: rootModel, userSecurityPolicyManager: currentUserSecurityPolicyManager]
     }
 }

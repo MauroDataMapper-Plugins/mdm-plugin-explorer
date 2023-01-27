@@ -24,7 +24,7 @@ class ExplorerInterceptor implements MdmInterceptor {
     boolean before() {
 
         // Ability to create a user folder is available to any authenticated user
-        if (['userFolder', 'templateFolder'].contains(actionName)) {
+        if (['userFolder', 'templateFolder', 'rootDataModel'].contains(actionName)) {
             if (currentUserSecurityPolicyManager.isAuthenticated()) {
                 return true
             }
