@@ -119,7 +119,6 @@ class BootStrap implements SecurityDefinition {
                 new Tuple('explorer.theme.material.typography.subheadingtwo','16px, 28px, 400'),
                 new Tuple('explorer.theme.material.typography.subheadingone','15px, 24px, 400'),
                 new Tuple('explorer.theme.material.typography.button','14px, 14px, 400'),
-                new Tuple('explorer.theme.material.typography.input','inherit, , 400'),
                 new Tuple('explorer.theme.regularcolors.hyperlink','#003752'),
                 new Tuple('explorer.theme.regularcolors.requestcount','#ffe603'),
                 new Tuple('explorer.theme.contrastcolors.page','#fff'),
