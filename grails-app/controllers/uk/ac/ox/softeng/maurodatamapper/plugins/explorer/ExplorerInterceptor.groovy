@@ -22,8 +22,12 @@ import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.MdmInterceptor
 class ExplorerInterceptor implements MdmInterceptor {
 
     boolean before() {
+        // Access available to anyone
+        if (['theme'].contains(actionName)) {
+            return true
+        }
 
-        // Ability to create a user folder is available to any authenticated user
+        // Authenticated user access only
         if (['userFolder', 'templateFolder', 'rootDataModel'].contains(actionName)) {
             if (currentUserSecurityPolicyManager.isAuthenticated()) {
                 return true
