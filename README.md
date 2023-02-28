@@ -58,6 +58,46 @@ To successfully send a contact form to an organistion, these API properties must
 - `email.research.contact.subject` Subject line of the above email
 - `email.research.contact.body` Body of the above email
 
+### Theming
+
+The plugin will automatically bootstrap a set of API properties related to theming an explorer user interface, all prefixed with `explorer.theme.*`. Altering these
+values can then affect the appearance of the explorer user interface, such as colour scheme.
+
+Below are the core colour properties that can be set to define the overall colour scheme:
+
+| Key | Description                                     | Default Value |
+| --- |-------------------------------------------------|------------|
+|explorer.theme.material.colors.primary|The primary, most prominent colour of the interface|#19381f |
+|explorer.theme.material.colors.accent|The secondary colour of the interface|#cdb980|
+|explorer.theme.material.colors.warn|The colour to use for errors, warnings or alerts|#a5122a|
+
+Additional colours can be set as follows. They are split into two types:
+
+1. Regular colours - for screen elements that just require one colour value.
+2. Contrasting colours - for screen elements that need an accompanying colour value for contrast. These colours are typically background colours, so a suitable foreground colour can automatically be determined.
+
+| Key | Description                                            | Default Value |
+| --- |--------------------------------------------------------|---------------|
+|explorer.theme.regularcolors.hyperlink| Colour for hyperlinks                                  |#003752|
+|explorer.theme.regularcolors.requestcount| Colour for the counter in the header bar               |#ffe603|
+|explorer.theme.contrastcolors.page| Overall background page colour                         |#fff|
+|explorer.theme.contrastcolors.unsentrequest| Colour of status tags for unsent requests              |#008bce|
+|explorer.theme.contrastcolors.submittedrequest| Colour of status tags for submitted requests           |#0e8f77|
+|explorer.theme.contrastcolors.classrow| Colour of data class rows when listed in data requests |#c4c4c4|
+
+Finally, typography can be adjusted for fonts and text sizes. Apart from `fontfamily`, all properties below define the font size, line height and font weight (in order, comma-separated):
+
+| Key | Description                                      | Default Value                        |
+| --- |--------------------------------------------------|--------------------------------------|
+|explorer.theme.material.typography.fontfamily| Define the font family to use for all text       | Roboto, "Helvetica Neue", sans-serif |
+|explorer.theme.material.typography.bodyone| Base body text                                   | 14px, 20px, 400                      |
+|explorer.theme.material.typography.bodytwo| Bolder body text                                 | 14px, 24px, 500                      | 
+|explorer.theme.material.typography.headline| Section heading corresponding to the `<h1>` tag. | 24px, 32px, 400                      |
+|explorer.theme.material.typography.title| Section heading corresponding to the `<h2>` tag.                                                 | 20px, 32px, 500                      |
+|explorer.theme.material.typography.subheadingtwo| Section heading corresponding to the `<h3>` tag.                                                 | 16px, 28px, 400                      |
+|explorer.theme.material.typography.subheadingone|  Section heading corresponding to the `<h4>` tag.                                                | 15px, 24px, 400                      |
+|explorer.theme.material.typography.button|  Buttons and anchors.                                                | 14px, 14px, 400                      |
+
 ### mdm-docker
 
 In the `docker-compose.yml` file add:
