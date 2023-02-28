@@ -1,0 +1,11 @@
+import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiProperty
+
+model {
+    ApiProperty apiProperty
+}
+
+json {
+    id apiProperty.id
+    key apiProperty.key.replace('explorer.theme.', '')
+    value apiProperty.value
+}
