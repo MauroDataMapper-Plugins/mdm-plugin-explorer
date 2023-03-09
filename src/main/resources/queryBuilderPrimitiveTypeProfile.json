@@ -13,8 +13,9 @@
         "allowedValues": [
           "boolean",
           "date",
+          "integer",
+          "decimal",
           "datetime",
-          "number",
           "string",
           "time"
         ]
