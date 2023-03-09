@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ * Copyright 2020-2023 University of Oxford and NHS England
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         apiPropertyService.findAndUpdateByKey(key, value, adminUser)
     }
 
-    void 'test create and get user folder when logged out'() {
+    void 'user folder: should be forbidden from getting folder when logged out'() {
         given:
         logout()
 
@@ -120,7 +120,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse FORBIDDEN, response
     }
 
-    void 'test create and get user folder when logged in'() {
+    void 'user folder: should create and get folder when logged in'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
 
@@ -141,7 +141,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         response.body().label == 'admin[at]maurodatamapper.com'
     }
 
-    void 'test get template folder when logged out'() {
+    void 'template folder: should be forbidden from getting folder when logged out'() {
         given:
         logout()
 
@@ -152,7 +152,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse FORBIDDEN, response
     }
 
-    void 'test get template folder when logged in'() {
+    void 'template folder: should get folder when logged in'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
 
@@ -165,7 +165,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         response.body().label == 'Mauro Data Explorer Templates'
     }
 
-    void 'test template folder has correct securable resource group role'() {
+    void 'template folder: should have correct securable resource group role'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
 
@@ -187,7 +187,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         securableResource.userGroup.name == 'Explorer Readers'
     }
 
-    void 'test get root data model when logged out'() {
+    void 'root data model: should be forbidden from getting model when logged out'() {
         given:
         logout()
 
@@ -198,7 +198,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse FORBIDDEN, response
     }
 
-    void 'test root data model is not set'() {
+    void 'root data model: should throw error if not configured'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
 
@@ -210,7 +210,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         response.body().exception.message.contains('has no value')
     }
 
-    void 'test root data mode is not found'() {
+    void 'root data model: should return not found if model is missing'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
         updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|dm:root model")
@@ -222,7 +222,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse NOT_FOUND, response
     }
 
-    void 'test root data model is not a data model'() {
+    void 'root data model: should throw error if not a data model'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
         updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|fo:${childFolder.label}")
@@ -235,7 +235,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         response.body().exception.message.contains('is not a Data Model')
     }
 
-    void 'test get root data model'() {
+    void 'root data model: should get root data model'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
         updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|dm:${rootDataModel.label}")
@@ -247,5 +247,63 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse OK, response
         response.body().id
         response.body().label == rootDataModel.label
+    }
+
+    void 'theme: should return values when not logged in'() {
+        given:
+        logout()
+
+        when: 'get the theme'
+        GET("/theme")
+
+        then:
+        verifyResponse OK, response
+    }
+
+    void 'theme: should return values when logged in'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+
+        when: 'get the theme'
+        GET("/theme")
+
+        then:
+        verifyResponse OK, response
+    }
+
+    void 'theme: should return default theme from bootstrap'() {
+        given:
+        logout()
+
+        when: 'get the theme'
+        GET("/theme")
+
+        then:
+        verifyResponse OK, response
+
+        def body = response.body()
+        verifyProperty(body.items, 'material.colors.primary', '#19381f')
+        verifyProperty(body.items, 'material.colors.accent', '#cdb980')
+        verifyProperty(body.items, 'material.colors.warn', '#a5122a')
+        verifyProperty(body.items, 'material.typography.fontfamily', 'Roboto, "Helvetica Neue", sans-serif')
+        verifyProperty(body.items, 'material.typography.bodyone', '14px, 20px, 400')
+        verifyProperty(body.items, 'material.typography.bodytwo', '14px, 24px, 500')
+        verifyProperty(body.items, 'material.typography.headline', '24px, 32px, 400')
+        verifyProperty(body.items, 'material.typography.title', '20px, 32px, 500')
+        verifyProperty(body.items, 'material.typography.subheadingtwo', '16px, 28px, 400')
+        verifyProperty(body.items, 'material.typography.subheadingone', '15px, 24px, 400')
+        verifyProperty(body.items, 'material.typography.button', '14px, 14px, 400')
+        verifyProperty(body.items, 'regularcolors.hyperlink', '#003752')
+        verifyProperty(body.items, 'regularcolors.requestcount', '#ffe603')
+        verifyProperty(body.items, 'contrastcolors.page', '#fff')
+        verifyProperty(body.items, 'contrastcolors.unsentrequest', '#008bce')
+        verifyProperty(body.items, 'contrastcolors.submittedrequest', '#0e8f77')
+        verifyProperty(body.items, 'contrastcolors.classrow', '#c4c4c4')
+        verifyProperty(body.items, 'images.header.logo', 'NOT SET')
+    }
+
+    void verifyProperty(props, key, expectedValue) {
+        def prop = props.find { it -> it.key == key }
+        assert prop.value == expectedValue
     }
 }

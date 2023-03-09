@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ * Copyright 2020-2023 University of Oxford and NHS England
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,55 +101,46 @@ class BootStrap implements SecurityDefinition {
             }
         }
 
+        Tuple<String>[] configDefaults = [
+                new Tuple('explorer.config.root_data_model_path', 'NOT SET'),
+                new Tuple('explorer.config.root_request_folder', requestFolderName),
+                new Tuple('explorer.config.root_template_folder', templateFolderName),
+                new Tuple('explorer.config.profile_namespace', 'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research'),
+                new Tuple('explorer.config.profile_service_name', 'ResearchDataElementProfileProviderService'),
+
+                new Tuple('explorer.theme.material.colors.primary','#19381f'),
+                new Tuple('explorer.theme.material.colors.accent','#cdb980'),
+                new Tuple('explorer.theme.material.colors.warn','#a5122a'),
+                new Tuple('explorer.theme.material.typography.fontfamily','Roboto, "Helvetica Neue", sans-serif'),
+                new Tuple('explorer.theme.material.typography.bodyone','14px, 20px, 400'),
+                new Tuple('explorer.theme.material.typography.bodytwo','14px, 24px, 500'),
+                new Tuple('explorer.theme.material.typography.headline','24px, 32px, 400'),
+                new Tuple('explorer.theme.material.typography.title','20px, 32px, 500'),
+                new Tuple('explorer.theme.material.typography.subheadingtwo','16px, 28px, 400'),
+                new Tuple('explorer.theme.material.typography.subheadingone','15px, 24px, 400'),
+                new Tuple('explorer.theme.material.typography.button','14px, 14px, 400'),
+                new Tuple('explorer.theme.regularcolors.hyperlink','#003752'),
+                new Tuple('explorer.theme.regularcolors.requestcount','#ffe603'),
+                new Tuple('explorer.theme.contrastcolors.page','#fff'),
+                new Tuple('explorer.theme.contrastcolors.unsentrequest','#008bce'),
+                new Tuple('explorer.theme.contrastcolors.submittedrequest','#0e8f77'),
+                new Tuple('explorer.theme.contrastcolors.classrow','#c4c4c4'),
+                new Tuple('explorer.theme.images.header.logo','NOT SET'),
+        ]
+
         ApiProperty.withNewTransaction {
-            if (ApiProperty.countByKey('explorer.config.root_data_model_path') == 0) {
-                ApiProperty rootPath = new ApiProperty(key: 'explorer.config.root_data_model_path',
-                                                       value: 'NOT SET',
-                                                       publiclyVisible: true,
-                                                       category: apiPropertyCategory,
-                                                       lastUpdatedBy: StandardEmailAddress.ADMIN,
-                                                       createdBy: StandardEmailAddress.ADMIN)
-                checkAndSave(messageSource, rootPath)
-            }
+            for (setting in configDefaults) {
+                def (String key, String value) = setting
 
-            if (ApiProperty.countByKey('explorer.config.root_request_folder') == 0) {
-                ApiProperty requestFolder = new ApiProperty(key: 'explorer.config.root_request_folder',
-                                                            value: requestFolderName,
-                                                            publiclyVisible: true,
-                                                            category: apiPropertyCategory,
-                                                            lastUpdatedBy: StandardEmailAddress.ADMIN,
-                                                            createdBy: StandardEmailAddress.ADMIN)
-                checkAndSave(messageSource, requestFolder)
-            }
-
-            if (ApiProperty.countByKey('explorer.config.root_template_folder') == 0) {
-                ApiProperty requestFolder = new ApiProperty(key: 'explorer.config.root_template_folder',
-                                                            value: templateFolderName,
-                                                            publiclyVisible: true,
-                                                            category: apiPropertyCategory,
-                                                            lastUpdatedBy: StandardEmailAddress.ADMIN,
-                                                            createdBy: StandardEmailAddress.ADMIN)
-                checkAndSave(messageSource, requestFolder)
-            }
-
-            if (ApiProperty.countByKey('explorer.config.profile_namespace') == 0) {
-                ApiProperty profileNamespace = new ApiProperty(key: 'explorer.config.profile_namespace',
-                                                               value: 'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research',
-                                                               publiclyVisible: true,
-                                                               category: apiPropertyCategory,
-                                                               lastUpdatedBy: StandardEmailAddress.ADMIN,
-                                                               createdBy: StandardEmailAddress.ADMIN)
-                checkAndSave(messageSource, profileNamespace)
-            }
-
-            if (ApiProperty.countByKey('explorer.config.profile_service_name') == 0) {
-                ApiProperty profileName = new ApiProperty(key: 'explorer.config.profile_service_name',
-                                                          value: 'ResearchDataElementProfileProviderService',
-                                                          publiclyVisible: true,
-                                                          category: apiPropertyCategory,
-                                                          lastUpdatedBy: StandardEmailAddress.ADMIN,
-                                                          createdBy: StandardEmailAddress.ADMIN)
-                checkAndSave(messageSource, profileName)
+                if (ApiProperty.countByKey(key) == 0) {
+                    ApiProperty rootPath = new ApiProperty(key: key,
+                            value: value,
+                            publiclyVisible: true,
+                            category: apiPropertyCategory,
+                            lastUpdatedBy: StandardEmailAddress.ADMIN,
+                            createdBy: StandardEmailAddress.ADMIN)
+                    checkAndSave(messageSource, rootPath)
+                }
             }
         }
 

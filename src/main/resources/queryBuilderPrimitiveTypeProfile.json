@@ -15,6 +15,7 @@
           "date",
           "integer",
           "decimal",
+          "datetime",
           "string",
           "time"
         ]

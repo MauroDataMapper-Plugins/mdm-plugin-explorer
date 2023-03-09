@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ * Copyright 2020-2023 University of Oxford and NHS England
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,12 @@ import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.MdmInterceptor
 class ExplorerInterceptor implements MdmInterceptor {
 
     boolean before() {
+        // Access available to anyone
+        if (['theme'].contains(actionName)) {
+            return true
+        }
 
-        // Ability to create a user folder is available to any authenticated user
+        // Authenticated user access only
         if (['userFolder', 'templateFolder', 'rootDataModel'].contains(actionName)) {
             if (currentUserSecurityPolicyManager.isAuthenticated()) {
                 return true

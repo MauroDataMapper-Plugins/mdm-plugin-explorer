@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ * Copyright 2020-2023 University of Oxford and NHS England
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ class UrlMappings {
             post "/contact"(controller: 'research', action: 'contact')
 
             group '/explorer', {
+                get "/theme"(controller: 'explorer', action: 'theme')
                 post "/userFolder"(controller: 'explorer', action: 'userFolder')
                 get "/templateFolder"(controller: 'explorer', action: 'templateFolder')
                 get "/rootDataModel"(controller: 'explorer', action: 'rootDataModel')

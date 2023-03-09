@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ * Copyright 2020-2023 University of Oxford and NHS England
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import grails.web.api.WebAttributes
 import groovy.util.logging.Slf4j
 
 import grails.gorm.transactions.Transactional
+import org.apache.commons.lang3.NotImplementedException
 import org.springframework.beans.factory.annotation.Autowired
 
 @Slf4j
@@ -56,9 +57,23 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
     @Autowired(required = false)
     SecurityPolicyManagerService securityPolicyManagerService
 
+    final String CATEGORY = 'Mauro Data Explorer'
+    final String THEME_PROPERTY_PREFIX = 'explorer.theme'
     final String REQUEST_FOLDER = 'explorer.config.root_request_folder'
     final String TEMPLATE_FOLDER = 'explorer.config.root_template_folder'
     final String ROOT_DATA_MODEL = 'explorer.config.root_data_model_path'
+
+    /**
+     * Get all properties required for theming the Mauro Data Explorer UI
+     * @return An index list of key/value pairs
+     */
+    def theme() {
+        List<ApiProperty> themeProperties = apiPropertyService
+            .findAllByPubliclyVisible([:])
+            .findAll {it.category == CATEGORY && it.key.startsWith(THEME_PROPERTY_PREFIX)}
+
+        respond themeProperties, model: [userSecurityPolicyManager: currentUserSecurityPolicyManager]
+    }
 
     /**
      * Get or create a user folder within the 'Explorer Content' folder.
