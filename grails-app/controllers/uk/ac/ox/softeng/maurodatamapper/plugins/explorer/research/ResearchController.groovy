@@ -44,15 +44,15 @@ class ResearchController implements ResourcelessMdmController, WebAttributes {
     DataModelService dataModelService
     EmailService emailService
 
-    final String APPROVAL_RECIPIENT_KEY = 'email.research.request.recipient'
-    final String APPROVAL_EMAIL_SUBJECT_KEY = 'email.research.request.subject'
-    final String APPROVAL_EMAIL_BODY_KEY = 'email.research.request.body'
+    final String APPROVAL_RECIPIENT_KEY = 'email.research.dataSpecification.recipient'
+    final String APPROVAL_EMAIL_SUBJECT_KEY = 'email.research.dataSpecification.subject'
+    final String APPROVAL_EMAIL_BODY_KEY = 'email.research.dataSpecification.body'
     final String CONTACT_RECIPIENT_KEY = 'email.research.contact.recipient'
     final String CONTACT_EMAIL_SUBJECT_KEY = 'email.research.contact.subject'
     final String CONTACT_EMAIL_BODY_KEY = 'email.research.contact.body'
 
     /**
-     * 'Submit' an access request by finalising the relevant Data Model and sending an email
+     * 'Submit' an data specification request by finalising the relevant Data Model and sending an email
      * to an approver.
      */
     @Transactional

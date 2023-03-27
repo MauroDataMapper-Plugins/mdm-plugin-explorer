@@ -59,7 +59,7 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
 
     final String CATEGORY = 'Mauro Data Explorer'
     final String THEME_PROPERTY_PREFIX = 'explorer.theme'
-    final String REQUEST_FOLDER = 'explorer.config.root_request_folder'
+    final String DATA_SPECIFICATION_FOLDER = 'explorer.config.root_data_specification_folder'
     final String TEMPLATE_FOLDER = 'explorer.config.root_template_folder'
     final String ROOT_DATA_MODEL = 'explorer.config.root_data_model_path'
 
@@ -83,16 +83,16 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
      */
     @Transactional
     def userFolder() {
-        ApiProperty requestFolderLabel = apiPropertyService.findByKey(REQUEST_FOLDER)
-        if (!requestFolderLabel) throw new ApiInternalException("RC05", "API Property for REQUEST_FOLDER ${REQUEST_FOLDER} is " +
+        ApiProperty dataSpecificationFolderLabel = apiPropertyService.findByKey(DATA_SPECIFICATION_FOLDER)
+        if (!dataSpecificationFolderLabel) throw new ApiInternalException("RC05", "API Property for DATA_SPECIFICATION_FOLDER ${DATA_SPECIFICATION_FOLDER} is " +
                                                                         "not configured")
 
-        Folder requestFolder = folderService.findDomainByLabel(requestFolderLabel.value)
-        if (!requestFolder) throw new ApiInternalException("RC06", "Folder ${requestFolderLabel.value} not available")
+        Folder dataSpecificationFolder = folderService.findDomainByLabel(dataSpecificationFolderLabel.value)
+        if (!dataSpecificationFolder) throw new ApiInternalException("RC06", "Folder ${dataSpecificationFolderLabel.value} not available")
 
         // Does user folder exist?
         String userFolderLabel = currentUser.emailAddress.replace("@", "[at]")
-        Folder userFolder = folderService.findByParentIdAndLabel(requestFolder.id, userFolderLabel)
+        Folder userFolder = folderService.findByParentIdAndLabel(dataSpecificationFolder.id, userFolderLabel)
 
         if (!userFolder) {
             // Create a user group from the user's email address if not already exists
@@ -106,7 +106,7 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
             }
 
             // Create a folder
-            userFolder = new Folder(label: userFolderLabel, createdBy: currentUser.emailAddress, parentFolder: requestFolder)
+            userFolder = new Folder(label: userFolderLabel, createdBy: currentUser.emailAddress, parentFolder: dataSpecificationFolder)
             folderService.save(userFolder)
 
             securableResourceGroupRoleService.createAndSaveSecurableResourceGroupRole(
@@ -126,7 +126,7 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
     }
 
     /**
-     * Get the root folder holding template requests
+     * Get the root folder holding template data specifications
      * @return A Folder object
      */
     def templateFolder() {

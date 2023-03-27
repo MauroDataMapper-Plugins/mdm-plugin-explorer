@@ -294,10 +294,10 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyProperty(body.items, 'material.typography.subheadingone', '15px, 24px, 400')
         verifyProperty(body.items, 'material.typography.button', '14px, 14px, 400')
         verifyProperty(body.items, 'regularcolors.hyperlink', '#003752')
-        verifyProperty(body.items, 'regularcolors.requestcount', '#ffe603')
+        verifyProperty(body.items, 'regularcolors.data_specification_count', '#ffe603')
         verifyProperty(body.items, 'contrastcolors.page', '#fff')
-        verifyProperty(body.items, 'contrastcolors.unsentrequest', '#008bce')
-        verifyProperty(body.items, 'contrastcolors.submittedrequest', '#0e8f77')
+        verifyProperty(body.items, 'contrastcolors.unsent_data_specification', '#008bce')
+        verifyProperty(body.items, 'contrastcolors.submitted_data_specification', '#0e8f77')
         verifyProperty(body.items, 'contrastcolors.classrow', '#c4c4c4')
         verifyProperty(body.items, 'images.header.logo', 'NOT SET')
     }
