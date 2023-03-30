@@ -1,0 +1,15 @@
+
+[
+  {
+    "sectionName": "usage",
+    "sectionDescription": "Store the id of the root data model that this data specification is linked to",
+    "fields": [
+      {
+        "fieldName": "Root model id",
+        "metadataPropertyName": "rootDataModelId",
+        "description": "The id of the root data model that this data specification is linked to",
+        "dataType": "string"
+      }
+    ]
+  }
+]
