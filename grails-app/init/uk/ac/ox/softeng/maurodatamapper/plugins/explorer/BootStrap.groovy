@@ -205,7 +205,7 @@ class BootStrap implements SecurityDefinition {
                 }
 
                 ApiProperty.withNewTransaction {
-                    ApiProperty recipient = new ApiProperty(key: 'email.research.dataspecification.recipient',
+                    ApiProperty recipient = new ApiProperty(key: 'email.research.data_specification.recipient',
                                                             value: 'admin@maurodatamapper.com',
                                                             publiclyVisible: false,
                                                             category: 'Email',
