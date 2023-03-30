@@ -69,7 +69,7 @@ class BootStrap implements SecurityDefinition {
         }
 
         def apiPropertyCategory = 'Mauro Data Explorer'
-        def dataSpecificationsFolderName = 'Mauro Data Explorer Data Specifications'
+        def dataSpecificationFolderName = 'Mauro Data Explorer Data Specifications'
         def templateFolderName = 'Mauro Data Explorer Templates'
 
         Folder.withNewTransaction {
