@@ -153,8 +153,28 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
         if (!rootDataModelPath.value || rootDataModelPath.value == 'NOT SET')
             throw new ApiInternalException("RC07", "API Property for ROOT_DATA_MODEL ${ROOT_DATA_MODEL} has no value")
 
-        def path = Path.from(rootDataModelPath.value)
-        def rootModel = pathService.findResourceByPathFromRootClass(Folder, path, currentUserSecurityPolicyManager)
+        def pathAsString = rootDataModelPath.value
+
+        // This gives us the opportunity to override the setting and reference an open root model
+        // by including '?finalised=false' at the end of the configured path.
+        def params = [:]
+
+        if (pathAsString.contains("?")) {
+            def pathAndParams = pathAsString.split("\\?")
+            pathAsString = pathAndParams[0]
+
+            def queryParams = pathAndParams[1].split("&")
+            params = queryParams.collectEntries {
+                param -> param.split("=").collect {
+                    URLDecoder.decode(it, "UTF-8")
+                }
+            }
+        }
+
+        params.putIfAbsent('finalised', true)
+        def path = Path.from(pathAsString)
+
+        def rootModel = pathService.findResourceByPathFromRootClass(Folder, path, currentUserSecurityPolicyManager, params)
 
         if (!rootModel) return notFound(DomainClass, rootDataModelPath.value)
 
