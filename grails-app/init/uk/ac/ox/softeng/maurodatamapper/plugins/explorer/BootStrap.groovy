@@ -69,12 +69,12 @@ class BootStrap implements SecurityDefinition {
         }
 
         def apiPropertyCategory = 'Mauro Data Explorer'
-        def requestFolderName = 'Mauro Data Explorer Requests'
+        def dataSpecificationFolderName = 'Mauro Data Explorer Data Specifications'
         def templateFolderName = 'Mauro Data Explorer Templates'
 
         Folder.withNewTransaction {
-            if (Folder.countByLabel(requestFolderName) == 0) {
-                Folder folder = new Folder(label: requestFolderName, createdBy: StandardEmailAddress.ADMIN)
+            if (Folder.countByLabel(dataSpecificationFolderName) == 0) {
+                Folder folder = new Folder(label: dataSpecificationFolderName, createdBy: StandardEmailAddress.ADMIN)
                 checkAndSave(messageSource, folder)
             }
         }
@@ -103,7 +103,7 @@ class BootStrap implements SecurityDefinition {
 
         Tuple<String>[] configDefaults = [
                 new Tuple('explorer.config.root_data_model_path', 'NOT SET'),
-                new Tuple('explorer.config.root_request_folder', requestFolderName),
+                new Tuple('explorer.config.root_data_specification_folder', dataSpecificationFolderName),
                 new Tuple('explorer.config.root_template_folder', templateFolderName),
                 new Tuple('explorer.config.profile_namespace', 'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research'),
                 new Tuple('explorer.config.profile_service_name', 'ResearchDataElementProfileProviderService'),
@@ -120,10 +120,10 @@ class BootStrap implements SecurityDefinition {
                 new Tuple('explorer.theme.material.typography.subheadingone','15px, 24px, 400'),
                 new Tuple('explorer.theme.material.typography.button','14px, 14px, 400'),
                 new Tuple('explorer.theme.regularcolors.hyperlink','#003752'),
-                new Tuple('explorer.theme.regularcolors.requestcount','#ffe603'),
+                new Tuple('explorer.theme.regularcolors.data_specification_count','#ffe603'),
                 new Tuple('explorer.theme.contrastcolors.page','#fff'),
-                new Tuple('explorer.theme.contrastcolors.unsentrequest','#008bce'),
-                new Tuple('explorer.theme.contrastcolors.submittedrequest','#0e8f77'),
+                new Tuple('explorer.theme.contrastcolors.unsent_data_specification','#008bce'),
+                new Tuple('explorer.theme.contrastcolors.submitted_data_specification','#0e8f77'),
                 new Tuple('explorer.theme.contrastcolors.classrow','#c4c4c4'),
                 new Tuple('explorer.theme.images.header.logo','NOT SET'),
         ]
@@ -205,7 +205,7 @@ class BootStrap implements SecurityDefinition {
                 }
 
                 ApiProperty.withNewTransaction {
-                    ApiProperty recipient = new ApiProperty(key: 'email.research.request.recipient',
+                    ApiProperty recipient = new ApiProperty(key: 'email.research.data_specification.recipient',
                                                             value: 'admin@maurodatamapper.com',
                                                             publiclyVisible: false,
                                                             category: 'Email',
