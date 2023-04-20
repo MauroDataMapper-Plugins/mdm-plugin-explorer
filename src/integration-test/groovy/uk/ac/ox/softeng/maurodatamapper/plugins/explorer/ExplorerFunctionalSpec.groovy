@@ -19,6 +19,7 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
 import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiPropertyService
 import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
+import uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
@@ -39,6 +40,7 @@ import static io.micronaut.http.HttpStatus.NOT_FOUND
 import static io.micronaut.http.HttpStatus.NO_CONTENT
 import static io.micronaut.http.HttpStatus.OK
 import static io.micronaut.http.HttpStatus.INTERNAL_SERVER_ERROR
+import static uk.ac.ox.softeng.maurodatamapper.util.GormUtils.checkAndSave
 
 /**
  * @see uk.ac.ox.softeng.maurodatamapper.plugins.explorer.ExplorerController*
@@ -163,6 +165,71 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse OK, response
         response.body().id
         response.body().label == 'Mauro Data Explorer Templates'
+    }
+
+    void 'shared specifications: Should return empty array if there are no data specifications'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+
+        when: 'get shared specifications'
+        GET("/sharedDataSpecifications")
+
+        then:
+        verifyResponse OK, response
+        response.body().count == 0
+        response.body().items == []
+    }
+
+    void 'shared specifications: Should return only shared specifications'() {
+        given: 'There is an authenticated user, and there are 3 data specs, 2 of them being shared'
+        loginUser('admin@maurodatamapper.com', 'password')
+        def sharedDataModelLabel = 'Shared DataSpec'
+
+        // Get data specs folder id
+        GET('folders', MAP_ARG, true)
+        def dataSpecFolder = response.body().items.find({it.label==('Mauro Data Explorer Data Specifications')})
+
+        // Create new folder within
+
+        def newFolderResponse = POST("folders/${dataSpecFolder.id}/folders", [
+                label: 'test[at]test',
+                description: 'new folder description'
+        ], MAP_ARG, true)
+        def newFolderId = newFolderResponse.body().id;
+
+        // Create data model within that folder
+        POST("folders/${newFolderId}/dataModels", [
+                label: sharedDataModelLabel,
+                description: 'sharedDataModelLabel 1 description',
+                modelType: 'DATA_STANDARD',
+                readableByAuthenticatedUsers: true
+        ], MAP_ARG, true)
+        POST("folders/${newFolderId}/dataModels", [
+                label: 'sharedDataModelLabel label',
+                description: 'sharedDataModelLabel 1 description',
+                modelType: 'DATA_STANDARD',
+                readableByAuthenticatedUsers: false
+        ], MAP_ARG, true)
+        // Using string interpolation to create second label caused the test to fail.
+        def secondDataModelLabel = sharedDataModelLabel + '2'
+        POST("folders/${newFolderId}/dataModels", [
+                label: secondDataModelLabel,
+                description: 'sharedDataModelLabel 2 description',
+                modelType: 'DATA_STANDARD',
+                readableByAuthenticatedUsers: true
+        ], MAP_ARG, true)
+
+        when: 'getting shared specifications'
+        GET("/sharedDataSpecifications")
+
+        then: 'Only the 2 shared specifications are in the response'
+        verifyResponse OK, response
+        response.body().count == 2
+        response.body().items[0].label.startsWith(sharedDataModelLabel)
+        response.body().items[1].label.startsWith(sharedDataModelLabel)
+
+        cleanup:
+        DELETE("folders/${newFolderId}?permanent=true", MAP_ARG, true)
     }
 
     void 'template folder: should have correct securable resource group role'() {
