@@ -42,7 +42,6 @@ import grails.web.api.WebAttributes
 import groovy.util.logging.Slf4j
 
 import grails.gorm.transactions.Transactional
-import org.apache.commons.lang3.NotImplementedException
 import org.springframework.beans.factory.annotation.Autowired
 
 @Slf4j
@@ -157,17 +156,17 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
         Folder dataSpecificationFolder = folderService.findDomainByLabel(dataSpecificationFolderLabel.value)
         if (!dataSpecificationFolder) throw new ApiInternalException("RC06", "Folder ${dataSpecificationFolderLabel.value} not available")
 
-        def allUserSpecificationFolders = dataSpecificationFolder.getChildFolders();
+        def userFolders = dataSpecificationFolder.getChildFolders()
 
-        def allSpecificationIds = allUserSpecificationFolders.collect({return it.id})
+        def userFoldersIds = userFolders.collect{it.id}
 
         List<DataModel> sharedSpecifications = []
 
         // findAllByFolderIdInList will error if an empty list is passed
-        if(allSpecificationIds.size() >0 ){
-            def allModelsFromFolders =  dataModelService.findAllByFolderIdInList(allSpecificationIds)
+        if(userFoldersIds.size() >0 ){
+            def allModelsFromFolders =  dataModelService.findAllByFolderIdInList(userFoldersIds)
 
-            sharedSpecifications = allModelsFromFolders.findAll({it.readableByAuthenticatedUsers == true })
+            sharedSpecifications = allModelsFromFolders.findAll{it.readableByAuthenticatedUsers}
         }
 
         respond sharedSpecifications, view: '/dataModel/index', model: [items: sharedSpecifications, userSecurityPolicyManager: currentUserSecurityPolicyManager]

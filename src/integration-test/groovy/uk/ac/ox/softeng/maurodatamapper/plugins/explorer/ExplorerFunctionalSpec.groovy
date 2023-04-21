@@ -19,7 +19,6 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
 import uk.ac.ox.softeng.maurodatamapper.core.admin.ApiPropertyService
 import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
-import uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
@@ -39,8 +38,8 @@ import static io.micronaut.http.HttpStatus.FORBIDDEN
 import static io.micronaut.http.HttpStatus.NOT_FOUND
 import static io.micronaut.http.HttpStatus.NO_CONTENT
 import static io.micronaut.http.HttpStatus.OK
+import static io.micronaut.http.HttpStatus.CREATED
 import static io.micronaut.http.HttpStatus.INTERNAL_SERVER_ERROR
-import static uk.ac.ox.softeng.maurodatamapper.util.GormUtils.checkAndSave
 
 /**
  * @see uk.ac.ox.softeng.maurodatamapper.plugins.explorer.ExplorerController*
@@ -183,41 +182,40 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
     void 'shared specifications: Should return only shared specifications'() {
         given: 'There is an authenticated user, and there are 3 data specs, 2 of them being shared'
         loginUser('admin@maurodatamapper.com', 'password')
-        def sharedDataModelLabel = 'Shared DataSpec'
+        def expectedLabelPrefix = 'Shared Data Specification'
 
         // Get data specs folder id
         GET('folders', MAP_ARG, true)
+        verifyResponse OK, response
         def dataSpecFolder = response.body().items.find({it.label==('Mauro Data Explorer Data Specifications')})
 
         // Create new folder within
-
         def newFolderResponse = POST("folders/${dataSpecFolder.id}/folders", [
                 label: 'test[at]test',
                 description: 'new folder description'
         ], MAP_ARG, true)
-        def newFolderId = newFolderResponse.body().id;
+        verifyResponse CREATED, newFolderResponse
+        def newFolderId = newFolderResponse.body().id
 
-        // Create data model within that folder
-        POST("folders/${newFolderId}/dataModels", [
-                label: sharedDataModelLabel,
-                description: 'sharedDataModelLabel 1 description',
-                modelType: 'DATA_STANDARD',
-                readableByAuthenticatedUsers: true
-        ], MAP_ARG, true)
-        POST("folders/${newFolderId}/dataModels", [
-                label: 'sharedDataModelLabel label',
-                description: 'sharedDataModelLabel 1 description',
-                modelType: 'DATA_STANDARD',
-                readableByAuthenticatedUsers: false
-        ], MAP_ARG, true)
-        // Using string interpolation to create second label caused the test to fail.
-        def secondDataModelLabel = sharedDataModelLabel + '2'
-        POST("folders/${newFolderId}/dataModels", [
-                label: secondDataModelLabel,
-                description: 'sharedDataModelLabel 2 description',
-                modelType: 'DATA_STANDARD',
-                readableByAuthenticatedUsers: true
-        ], MAP_ARG, true)
+        // Create 3 data specifications within the folder 2 of them shared
+        for (i in 0..<3) {
+            String dataModelLabel = expectedLabelPrefix + i
+            boolean shared = true
+
+            if(i==0){
+                dataModelLabel = 'Not shared data specification'
+                shared = false
+            }
+            String description = dataModelLabel + ' description'
+
+            POST("folders/${newFolderId}/dataModels", [
+                    label: dataModelLabel,
+                    description: description,
+                    modelType: 'DATA_STANDARD',
+                    readableByAuthenticatedUsers: shared
+            ], MAP_ARG, true)
+            verifyResponse CREATED, response
+        }
 
         when: 'getting shared specifications'
         GET("/sharedDataSpecifications")
@@ -225,11 +223,23 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         then: 'Only the 2 shared specifications are in the response'
         verifyResponse OK, response
         response.body().count == 2
-        response.body().items[0].label.startsWith(sharedDataModelLabel)
-        response.body().items[1].label.startsWith(sharedDataModelLabel)
+        response.body().items[0].label.startsWith(expectedLabelPrefix)
+        response.body().items[1].label.startsWith(expectedLabelPrefix)
 
         cleanup:
         DELETE("folders/${newFolderId}?permanent=true", MAP_ARG, true)
+        verifyResponse NO_CONTENT, response
+    }
+
+    void 'shared specification: should be forbidden from getting specifications when logged out'() {
+        given:
+        logout()
+
+        when: 'listing shared data specifications'
+        GET("/sharedDataSpecifications")
+
+        then:
+        verifyResponse FORBIDDEN, response
     }
 
     void 'template folder: should have correct securable resource group role'() {
