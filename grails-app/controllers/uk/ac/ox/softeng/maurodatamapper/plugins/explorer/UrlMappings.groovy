@@ -29,6 +29,7 @@ class UrlMappings {
                 post "/userFolder"(controller: 'explorer', action: 'userFolder')
                 get "/templateFolder"(controller: 'explorer', action: 'templateFolder')
                 get "/rootDataModel"(controller: 'explorer', action: 'rootDataModel')
+                get "/sharedDataSpecifications"(controller: 'explorer', action: 'sharedDataSpecifications')
             }
         }
     }

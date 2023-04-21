@@ -38,6 +38,7 @@ import static io.micronaut.http.HttpStatus.FORBIDDEN
 import static io.micronaut.http.HttpStatus.NOT_FOUND
 import static io.micronaut.http.HttpStatus.NO_CONTENT
 import static io.micronaut.http.HttpStatus.OK
+import static io.micronaut.http.HttpStatus.CREATED
 import static io.micronaut.http.HttpStatus.INTERNAL_SERVER_ERROR
 
 /**
@@ -163,6 +164,82 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse OK, response
         response.body().id
         response.body().label == 'Mauro Data Explorer Templates'
+    }
+
+    void 'shared specifications: Should return empty array if there are no data specifications'() {
+        given:
+        loginUser('admin@maurodatamapper.com', 'password')
+
+        when: 'get shared specifications'
+        GET("/sharedDataSpecifications")
+
+        then:
+        verifyResponse OK, response
+        response.body().count == 0
+        response.body().items == []
+    }
+
+    void 'shared specifications: Should return only shared specifications'() {
+        given: 'There is an authenticated user, and there are 3 data specs, 2 of them being shared'
+        loginUser('admin@maurodatamapper.com', 'password')
+        def expectedLabelPrefix = 'Shared Data Specification'
+
+        // Get data specs folder id
+        GET('folders', MAP_ARG, true)
+        verifyResponse OK, response
+        def dataSpecFolder = response.body().items.find({it.label==('Mauro Data Explorer Data Specifications')})
+
+        // Create new folder within
+        def newFolderResponse = POST("folders/${dataSpecFolder.id}/folders", [
+                label: 'test[at]test',
+                description: 'new folder description'
+        ], MAP_ARG, true)
+        verifyResponse CREATED, newFolderResponse
+        def newFolderId = newFolderResponse.body().id
+
+        // Create 3 data specifications within the folder 2 of them shared
+        for (i in 0..<3) {
+            String dataModelLabel = expectedLabelPrefix + i
+            boolean shared = true
+
+            if(i==0){
+                dataModelLabel = 'Not shared data specification'
+                shared = false
+            }
+            String description = dataModelLabel + ' description'
+
+            POST("folders/${newFolderId}/dataModels", [
+                    label: dataModelLabel,
+                    description: description,
+                    modelType: 'DATA_STANDARD',
+                    readableByAuthenticatedUsers: shared
+            ], MAP_ARG, true)
+            verifyResponse CREATED, response
+        }
+
+        when: 'getting shared specifications'
+        GET("/sharedDataSpecifications")
+
+        then: 'Only the 2 shared specifications are in the response'
+        verifyResponse OK, response
+        response.body().count == 2
+        response.body().items[0].label.startsWith(expectedLabelPrefix)
+        response.body().items[1].label.startsWith(expectedLabelPrefix)
+
+        cleanup:
+        DELETE("folders/${newFolderId}?permanent=true", MAP_ARG, true)
+        verifyResponse NO_CONTENT, response
+    }
+
+    void 'shared specification: should be forbidden from getting specifications when logged out'() {
+        given:
+        logout()
+
+        when: 'listing shared data specifications'
+        GET("/sharedDataSpecifications")
+
+        then:
+        verifyResponse FORBIDDEN, response
     }
 
     void 'template folder: should have correct securable resource group role'() {

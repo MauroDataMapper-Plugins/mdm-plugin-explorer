@@ -24,6 +24,8 @@ import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.core.container.FolderService
 import uk.ac.ox.softeng.maurodatamapper.core.path.PathService
 import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.ResourcelessMdmController
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.path.Path
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUser
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
@@ -40,7 +42,6 @@ import grails.web.api.WebAttributes
 import groovy.util.logging.Slf4j
 
 import grails.gorm.transactions.Transactional
-import org.apache.commons.lang3.NotImplementedException
 import org.springframework.beans.factory.annotation.Autowired
 
 @Slf4j
@@ -48,6 +49,7 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
 
     ApiPropertyService apiPropertyService
     CatalogueUserService catalogueUserService
+    DataModelService dataModelService
     FolderService folderService
     GroupRoleService groupRoleService
     UserGroupService userGroupService
@@ -139,6 +141,35 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
 
         respond templateFolder, view: '/folder/show', model: [folder: templateFolder, userSecurityPolicyManager:
             currentUserSecurityPolicyManager]
+    }
+
+    /**
+     * Get the data specifications that are shared with the community (i.e.
+     * readable by any authenticated user).
+     * @return A list of DataModel objects
+     */
+    def sharedDataSpecifications() {
+        ApiProperty dataSpecificationFolderLabel = apiPropertyService.findByKey(DATA_SPECIFICATION_FOLDER)
+        if (!dataSpecificationFolderLabel) throw new ApiInternalException("RC05", "API Property for DATA_SPECIFICATION_FOLDER ${DATA_SPECIFICATION_FOLDER} is " +
+                "not configured")
+
+        Folder dataSpecificationFolder = folderService.findDomainByLabel(dataSpecificationFolderLabel.value)
+        if (!dataSpecificationFolder) throw new ApiInternalException("RC06", "Folder ${dataSpecificationFolderLabel.value} not available")
+
+        def userFolders = dataSpecificationFolder.getChildFolders()
+
+        def userFoldersIds = userFolders.collect{it.id}
+
+        List<DataModel> sharedSpecifications = []
+
+        // findAllByFolderIdInList will error if an empty list is passed
+        if(userFoldersIds.size() >0 ){
+            def allModelsFromFolders =  dataModelService.findAllByFolderIdInList(userFoldersIds)
+
+            sharedSpecifications = allModelsFromFolders.findAll{it.readableByAuthenticatedUsers}
+        }
+
+        respond sharedSpecifications, view: '/dataModel/index', model: [items: sharedSpecifications, userSecurityPolicyManager: currentUserSecurityPolicyManager]
     }
 
     /**
