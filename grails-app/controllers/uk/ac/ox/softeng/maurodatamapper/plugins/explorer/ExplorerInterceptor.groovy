@@ -28,7 +28,8 @@ class ExplorerInterceptor implements MdmInterceptor {
         }
 
         // Authenticated user access only
-        if (['userFolder', 'templateFolder', 'rootDataModel', 'sharedDataSpecifications'].contains(actionName)) {
+        if (['userFolder', 'templateFolder', 'rootDataModel',
+             'sharedDataSpecifications', 'getLatestModelDataSpecifications'].contains(actionName)) {
             if (currentUserSecurityPolicyManager.isAuthenticated()) {
                 return true
             }

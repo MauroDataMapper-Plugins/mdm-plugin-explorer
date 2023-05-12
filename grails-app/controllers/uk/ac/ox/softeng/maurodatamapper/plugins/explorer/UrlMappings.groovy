@@ -30,6 +30,7 @@ class UrlMappings {
                 get "/templateFolder"(controller: 'explorer', action: 'templateFolder')
                 get "/rootDataModel"(controller: 'explorer', action: 'rootDataModel')
                 get "/sharedDataSpecifications"(controller: 'explorer', action: 'sharedDataSpecifications')
+                get "/getLatestModelDataSpecifications"(controller: 'explorer', action: 'getLatestModelDataSpecifications')
             }
         }
     }

@@ -242,6 +242,63 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse FORBIDDEN, response
     }
 
+    void 'list latest model data specification: should be forbidden when logged out'(){
+        given:
+        logout()
+
+        when: 'listing data specifications'
+        GET("/getLatestModelDataSpecifications")
+
+        then:
+        verifyResponse FORBIDDEN, response
+    }
+
+    void 'list latest model data specification: should return only the latest version'(){
+        given: 'There is an authenticated user, and there are 2 data specs, 1 of them is the latest version'
+        loginUser('admin@maurodatamapper.com', 'password')
+
+        // Get data specs folder id
+        POST("/userFolder", [:], MAP_ARG)
+        verifyResponse OK, response
+        def userFolderId = response.body().id;
+
+        // Create data specifications
+        def dataSpecCreateResponse = POST("folders/${userFolderId}/dataModels", [
+                label: 'Plugin Explorer functional test',
+                description: 'Plugin Explorer functional test',
+                modelType: 'DATA_STANDARD',
+        ], MAP_ARG, true)
+        verifyResponse CREATED, response
+        def newDataSpecId = dataSpecCreateResponse.body().id
+
+        PUT("dataModels/${newDataSpecId}/finalise", [
+                versionChangeType: 'Major'
+        ], MAP_ARG, true)
+        verifyResponse OK, response
+
+        def newVersionResponse = PUT("dataModels/${newDataSpecId}/newBranchModelVersion", [
+                asynchronous: 'false'
+        ], MAP_ARG, true)
+        verifyResponse CREATED, response
+
+        def latestVersionId = newVersionResponse.body().id
+
+        when: 'listing data specifications'
+        GET("/getLatestModelDataSpecifications")
+
+        then: 'Only the latest specifications is in the response'
+        verifyResponse OK, response
+        response.body().count == 1
+        response.body().items[0].id == latestVersionId
+
+        cleanup:
+        DELETE("dataModels/${latestVersionId}?permanent=true", MAP_ARG, true)
+        verifyResponse NO_CONTENT, response
+
+        DELETE("dataModels/${newDataSpecId}?permanent=true", MAP_ARG, true)
+        verifyResponse NO_CONTENT, response
+    }
+
     void 'template folder: should have correct securable resource group role'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
