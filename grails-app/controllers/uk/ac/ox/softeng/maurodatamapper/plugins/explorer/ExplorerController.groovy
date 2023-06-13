@@ -85,43 +85,7 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
      */
     @Transactional
     def userFolder() {
-        ApiProperty dataSpecificationFolderLabel = apiPropertyService.findByKey(DATA_SPECIFICATION_FOLDER)
-        if (!dataSpecificationFolderLabel) throw new ApiInternalException("RC05", "API Property for DATA_SPECIFICATION_FOLDER ${DATA_SPECIFICATION_FOLDER} is " +
-                                                                        "not configured")
-
-        Folder dataSpecificationFolder = folderService.findDomainByLabel(dataSpecificationFolderLabel.value)
-        if (!dataSpecificationFolder) throw new ApiInternalException("RC06", "Folder ${dataSpecificationFolderLabel.value} not available")
-
-        // Does user folder exist?
-        String userFolderLabel = currentUser.emailAddress.replace("@", "[at]")
-        Folder userFolder = folderService.findByParentIdAndLabel(dataSpecificationFolder.id, userFolderLabel)
-
-        if (!userFolder) {
-            // Create a user group from the user's email address if not already exists
-            String userGroupName = "${userFolderLabel} Explorer Group"
-            UserGroup userGroup = userGroupService.findByName(userGroupName)
-            CatalogueUser catalogueUser = catalogueUserService.get(currentUser.id)
-
-            if (!userGroup) {
-                // New user group is saved and flushed
-                userGroup = userGroupService.generateAndSaveNewGroup(catalogueUser, userGroupName, 'User group for Explorer')
-            }
-
-            // Create a folder
-            userFolder = new Folder(label: userFolderLabel, createdBy: currentUser.emailAddress, parentFolder: dataSpecificationFolder)
-            folderService.save(userFolder)
-
-            securableResourceGroupRoleService.createAndSaveSecurableResourceGroupRole(
-                userFolder,
-                groupRoleService.getFromCache(GroupRole.EDITOR_ROLE_NAME).groupRole,
-                userGroup,
-                catalogueUser)
-
-            if (securityPolicyManagerService) {
-                currentUserSecurityPolicyManager =
-                    securityPolicyManagerService.addSecurityForSecurableResource(userFolder, currentUser, userFolder.label)
-            }
-        }
+        def userFolder = getOrCreateUserFolder()
 
         respond userFolder, view: '/folder/show', model: [folder: userFolder, userSecurityPolicyManager:
             currentUserSecurityPolicyManager]
@@ -169,7 +133,9 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
             sharedSpecifications = allModelsFromFolders.findAll{it.readableByAuthenticatedUsers}
         }
 
-        respond sharedSpecifications, view: '/dataModel/index', model: [items: sharedSpecifications, userSecurityPolicyManager: currentUserSecurityPolicyManager]
+        def lastModelVersionSharedSpecifications = getLatestModelFromListOfDataSpecification(sharedSpecifications)
+
+        respond lastModelVersionSharedSpecifications, view: '/dataModel/index', model: [items: lastModelVersionSharedSpecifications, userSecurityPolicyManager: currentUserSecurityPolicyManager]
     }
 
     /**
@@ -212,5 +178,74 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
         if (rootModel.domainType != 'DataModel') throw new ApiInternalException("RC08", "ROOT_DATA_MODEL ${ROOT_DATA_MODEL} is not a Data Model")
 
         respond rootModel, view: '/dataModel/show', model: [dataModel: rootModel, userSecurityPolicyManager: currentUserSecurityPolicyManager]
+    }
+
+    def getLatestModelDataSpecifications(){
+        def userFolder = getOrCreateUserFolder()
+
+        def dataSpecifications = dataModelService.findAllByFolderId(userFolder.id)
+
+        def latestModelDataSpecifications = getLatestModelFromListOfDataSpecification(dataSpecifications)
+
+        respond latestModelDataSpecifications, view: '/dataModel/index', model: [items: latestModelDataSpecifications, userSecurityPolicyManager: currentUserSecurityPolicyManager]
+    }
+
+    private List<DataModel> getLatestModelFromListOfDataSpecification(List<DataModel> dataSpecificationList){
+
+        // For each different label, find the latest model version.
+        List<DataModel> lastModelVersionSharedSpecifications = []
+
+        if(dataSpecificationList != null && dataSpecificationList.size() > 0) {
+            List<String> uniqueSharedSpecNames = dataSpecificationList.collect { it.label }.unique();
+
+            uniqueSharedSpecNames.forEach {
+                def latestModel = dataModelService.findLatestModelByLabel(it)
+                lastModelVersionSharedSpecifications.add(latestModel)
+            }
+        }
+
+        return lastModelVersionSharedSpecifications;
+    }
+
+    private Folder getOrCreateUserFolder(){
+        ApiProperty dataSpecificationFolderLabel = apiPropertyService.findByKey(DATA_SPECIFICATION_FOLDER)
+        if (!dataSpecificationFolderLabel) throw new ApiInternalException("RC05", "API Property for DATA_SPECIFICATION_FOLDER ${DATA_SPECIFICATION_FOLDER} is " +
+                "not configured")
+
+        Folder dataSpecificationFolder = folderService.findDomainByLabel(dataSpecificationFolderLabel.value)
+        if (!dataSpecificationFolder) throw new ApiInternalException("RC06", "Folder ${dataSpecificationFolderLabel.value} not available")
+
+        // Does user folder exist?
+        String userFolderLabel = currentUser.emailAddress.replace("@", "[at]")
+        Folder userFolder = folderService.findByParentIdAndLabel(dataSpecificationFolder.id, userFolderLabel)
+
+        if (!userFolder) {
+            // Create a user group from the user's email address if not already exists
+            String userGroupName = "${userFolderLabel} Explorer Group"
+            UserGroup userGroup = userGroupService.findByName(userGroupName)
+            CatalogueUser catalogueUser = catalogueUserService.get(currentUser.id)
+
+            if (!userGroup) {
+                // New user group is saved and flushed
+                userGroup = userGroupService.generateAndSaveNewGroup(catalogueUser, userGroupName, 'User group for Explorer')
+            }
+
+            // Create a folder
+            userFolder = new Folder(label: userFolderLabel, createdBy: currentUser.emailAddress, parentFolder: dataSpecificationFolder)
+            folderService.save(userFolder)
+
+            securableResourceGroupRoleService.createAndSaveSecurableResourceGroupRole(
+                    userFolder,
+                    groupRoleService.getFromCache(GroupRole.EDITOR_ROLE_NAME).groupRole,
+                    userGroup,
+                    catalogueUser)
+
+            if (securityPolicyManagerService) {
+                currentUserSecurityPolicyManager =
+                        securityPolicyManagerService.addSecurityForSecurableResource(userFolder, currentUser, userFolder.label)
+            }
+        }
+
+        return userFolder
     }
 }
