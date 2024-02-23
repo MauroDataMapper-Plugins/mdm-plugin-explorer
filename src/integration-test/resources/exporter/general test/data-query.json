@@ -1,0 +1,60 @@
+{
+  "condition": "and",
+  "entity": "people.patients",
+  "rules": [
+    {
+      "condition": "or",
+      "entity": "medical.episodes",
+      "rules": [
+        {
+          "entity": "medical.episodes",
+          "field": "do_not_include",
+          "operator": "=",
+          "value": "true"
+        },
+        {
+          "entity": "medical.episodes",
+          "field": "do_not_include",
+          "operator": "=",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "condition": "and",
+      "entity": "medical.treatments",
+      "rules": [
+        {
+          "entity": "medical.treatments",
+          "field": "givenOn",
+          "operator": ">",
+          "value": "01/01/2023"
+        },
+        {
+          "entity": "medical.treatments",
+          "field": "givenOn",
+          "operator": "<",
+          "value": "31/12/2023"
+        }
+      ]
+    },
+    {
+      "condition": "and",
+      "entity": "people.patients",
+      "rules": [
+        {
+          "entity": "people.patients",
+          "field": "age",
+          "operator": ">",
+          "value": "18"
+        },
+        {
+          "entity": "people.patients",
+          "field": "age",
+          "operator": "<",
+          "value": "65"
+        }
+      ]
+    }
+  ]
+}

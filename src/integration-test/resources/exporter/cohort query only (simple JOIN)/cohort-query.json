@@ -1,0 +1,18 @@
+{
+  "condition": "and",
+  "entity": "people.patients",
+  "rules": [
+    {
+      "condition": "and",
+      "entity": "medical.episodes",
+      "rules": [
+        {
+          "entity": "medical.episodes",
+          "field": "occurredAt",
+          "operator": "=",
+          "value": "25/12/2020"
+        }
+      ]
+    }
+  ]
+}

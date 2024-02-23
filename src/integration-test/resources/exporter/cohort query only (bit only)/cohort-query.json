@@ -1,0 +1,12 @@
+{
+  "condition": "and",
+  "entity": "people.patients",
+  "rules": [
+    {
+      "entity": "people.patients",
+      "field": "exercisesRegularly",
+      "operator": "=",
+      "value": "true"
+    }
+  ]
+}

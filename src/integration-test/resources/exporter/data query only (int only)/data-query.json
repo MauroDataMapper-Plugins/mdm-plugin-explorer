@@ -1,0 +1,18 @@
+{
+  "condition": "and",
+  "entity": "people.patients",
+  "rules": [
+    {
+      "condition": "and",
+      "entity": "medical.treatments",
+      "rules": [
+        {
+          "entity": "medical.treatments",
+          "field": "id",
+          "operator": "=",
+          "value": "1"
+        }
+      ]
+    }
+  ]
+}

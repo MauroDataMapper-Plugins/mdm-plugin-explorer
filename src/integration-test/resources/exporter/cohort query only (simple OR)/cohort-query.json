@@ -1,0 +1,24 @@
+{
+  "condition": "and",
+  "entity": "people.patients",
+  "rules": [
+    {
+      "condition": "or",
+      "entity": "people.patients",
+      "rules": [
+        {
+          "entity": "people.patients",
+          "field": "age",
+          "operator": "<",
+          "value": "18"
+        },
+        {
+          "entity": "people.patients",
+          "field": "age",
+          "operator": ">",
+          "value": "65"
+        }
+      ]
+    }
+  ]
+}
