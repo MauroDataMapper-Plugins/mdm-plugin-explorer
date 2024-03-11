@@ -101,9 +101,7 @@ class QueryBuilderCoreTableProfileProviderService extends JsonProfileProviderSer
                 }
                 else {
                     // We should never reach this point
-                    errors.rejectValue("fields[0].currentValue", 'datamodel.not.found',
-                                       new Object[]{'currentValue', 'ProfileField.simpleName', null, errorLabel, errorField},
-                                       "DataModel \"${dataModelId}\" cannot be found")
+                    throw new Error("DataModel \"${dataModelId}\" cannot be found")
                 }
 
                 return

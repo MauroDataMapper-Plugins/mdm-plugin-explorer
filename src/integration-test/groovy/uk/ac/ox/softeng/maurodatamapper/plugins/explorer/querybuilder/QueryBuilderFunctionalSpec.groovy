@@ -62,6 +62,8 @@ class QueryBuilderFunctionalSpec extends BaseFunctionalSpec implements SecurityD
     QueryBuilderCoreTableProfileProviderService queryBuilderCoreTableProfileProviderService
     GroupBasedSecurityPolicyManagerService groupBasedSecurityPolicyManagerService
 
+    // Setup a DataModel for the tests. This only needs to be run once for all tests since
+    // the tests do not change the DataModel.
     @RunOnce
     @Transactional
     def setup() {
@@ -134,7 +136,7 @@ class QueryBuilderFunctionalSpec extends BaseFunctionalSpec implements SecurityD
     }
 
     void 'S01: query builder profile, test validity of core table string'(String coreTable, String[] expectedErrors) {
-        when:
+        given: 'The user has a complete query builder core table profile with the given value for the coreTable field'
         QueryBuilderCoreTableProfileProviderService pps = queryBuilderCoreTableProfileProviderService
         String endpointPrefix = "dataModels/${dataModelId}"
         Map profileMap =
@@ -152,12 +154,13 @@ class QueryBuilderFunctionalSpec extends BaseFunctionalSpec implements SecurityD
                 label: "${dataModelLabel}",
             ]
 
+        when: 'The profile is validated'
         // We need to run the GET first to setup the dataModelId for the validation
         // This is the way profiles are called from the Mauro UI so the validation code should be safe
         GET("${endpointPrefix}/profile/${pps.namespace}/${pps.name}/${pps.version}")
         POST("${endpointPrefix}/profile/${pps.namespace}/${pps.name}/validate", profileMap)
 
-        then:
+        then: 'The expected validation results are produced (expectedErrors)'
         if (expectedErrors.size() == 0) {
             verifyResponse(OK, response)
             Assert.assertEquals(coreTable, responseBody().sections.fields[0].currentValue[0])
