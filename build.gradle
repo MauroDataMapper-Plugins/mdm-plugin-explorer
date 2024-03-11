@@ -68,7 +68,7 @@ dependencies {
     implementation "org.grails.plugins:views-json-templates"
     implementation "org.grails.plugins:views-markup"
     implementation "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
-    implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.2'
+    implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1'
     profile "org.grails.profiles:rest-api-plugin"
     developmentOnly "org.springframework.boot:spring-boot-starter-tomcat"
     runtimeOnly "org.glassfish.web:el-impl:2.2.1-b05"
