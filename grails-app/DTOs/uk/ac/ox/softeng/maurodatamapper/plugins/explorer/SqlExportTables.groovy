@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 University of Oxford and NHS England
+ * Copyright 2020-2024 University of Oxford and NHS England
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,18 @@
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
 class SqlExportTables {
+    private SqlExportCohortTableOrView cohortTableOrView;
     private List<SqlExportTableOrView> tableOrViews = []
 
     List<SqlExportTableOrView> getTableOrViews() {
         tableOrViews
+    }
+
+    SqlExportCohortTableOrView getCohortTableOrView() {
+        cohortTableOrView
+    }
+
+    SqlExportCohortTableOrView setCohortTableOrView(SqlExportCohortTableOrView cohortTableOrView) {
+        this.cohortTableOrView = cohortTableOrView
     }
 }

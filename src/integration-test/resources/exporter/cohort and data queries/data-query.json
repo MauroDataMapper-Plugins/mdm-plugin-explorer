@@ -28,13 +28,13 @@
           "entity": "medical.treatments",
           "field": "givenOn",
           "operator": ">",
-          "value": "01/01/2023"
+          "value": "01/01/2023 12:01:01"
         },
         {
           "entity": "medical.treatments",
           "field": "givenOn",
           "operator": "<",
-          "value": "31/12/2023"
+          "value": "31/12/2023 23:59:59"
         }
       ]
     },

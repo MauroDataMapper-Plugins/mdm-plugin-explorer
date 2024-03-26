@@ -197,54 +197,6 @@ class IntegrationTestGivens {
         profileField
     }
 
-    Profile "there is a data model standardisation profile"(
-        DataModel entity,
-        User user,
-        @ClosureParams(
-            value = SimpleType.class,
-            options = 'uk.ac.ox.softeng.maurodatamapper.profile.domain.ProfileSection'
-        ) Closure modifyFields) {
-        updateAndStoreProfile(
-            "uk.ac.ox.softeng.maurodatamapper.plugins.standardisation.profiles",
-            "DataModelStandardisationProfileProviderService",
-            "Database",
-            entity,
-            user,
-            modifyFields)
-    }
-
-    Profile "there is a data class standardisation profile"(
-        DataClass entity,
-        User user,
-        @ClosureParams(
-            value = SimpleType.class,
-            options = 'uk.ac.ox.softeng.maurodatamapper.profile.domain.ProfileSection'
-        ) Closure modifyFields) {
-        updateAndStoreProfile(
-            "uk.ac.ox.softeng.maurodatamapper.plugins.standardisation.profiles",
-            "DataClassStandardisationProfileProviderService",
-            "Table or View",
-            entity,
-            user,
-            modifyFields)
-    }
-
-    Profile "there is a data element standardisation profile"(
-        DataElement entity,
-        User user,
-        @ClosureParams(
-            value = SimpleType.class,
-            options = 'uk.ac.ox.softeng.maurodatamapper.profile.domain.ProfileSection'
-        ) Closure modifyFields) {
-        updateAndStoreProfile(
-            "uk.ac.ox.softeng.maurodatamapper.plugins.standardisation.profiles",
-            "DataElementStandardisationProfileProviderService",
-            "Table Column",
-            entity,
-            user,
-            modifyFields)
-    }
-
     Profile "there is a data element sql column profile"(
         DataElement entity,
         User user,
@@ -256,6 +208,22 @@ class IntegrationTestGivens {
             "uk.ac.ox.softeng.maurodatamapper.plugins.database.sqlserver.column",
             "SqlServerColumnProfileProviderService",
             "Column Properties",
+            entity,
+            user,
+            modifyFields)
+    }
+
+    Profile "there is a data class sql table profile"(
+        DataClass entity,
+        User user,
+        @ClosureParams(
+            value = SimpleType.class,
+            options = 'uk.ac.ox.softeng.maurodatamapper.profile.domain.ProfileSection'
+        ) Closure modifyFields) {
+        updateAndStoreProfile(
+            "uk.ac.ox.softeng.maurodatamapper.plugins.database.sqlserver.table",
+            "SqlServerTableProfileProviderService",
+            "Table / View Properties",
             entity,
             user,
             modifyFields)

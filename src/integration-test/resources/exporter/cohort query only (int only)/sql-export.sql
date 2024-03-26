@@ -1,3 +1,21 @@
+IF OBJECT_ID(N'tempdb..#cohort') IS NOT NULL
+    DROP TABLE [#cohort]
+GO
+
+CREATE TABLE [#cohort] (
+    [id] int NOT NULL)
+GO
+
+INSERT INTO [#cohort] (
+    [id])
+SELECT
+    [people].[patients].[id]
+FROM
+    [people].[patients]
+WHERE
+    [people].[patients].[age] = 18
+GO
+
 SELECT
     [people].[patients].[id],
     [people].[patients].[forename],
@@ -8,8 +26,10 @@ SELECT
     [people].[patients].[exercisesRegularly]
 FROM
     [people].[patients]
-WHERE
-    [people].[patients].[age] = 18
+JOIN
+    [#cohort]
+ON
+    [#cohort].[id] = [people].[patients].[id]
 GO
 
 SELECT
@@ -21,6 +41,10 @@ SELECT
     [medical].[episodes].[do_not_include]
 FROM
     [medical].[episodes]
+JOIN
+    [#cohort]
+ON
+    [#cohort].[id] = [medical].[episodes].[patientId]
 GO
 
 SELECT
@@ -31,4 +55,12 @@ SELECT
     [medical].[treatments].[do_not_include]
 FROM
     [medical].[treatments]
+JOIN
+    [#cohort]
+ON
+    [#cohort].[id] = [medical].[treatments].[patientId]
+GO
+
+IF OBJECT_ID(N'tempdb..#cohort') IS NOT NULL
+    DROP TABLE [#cohort]
 GO

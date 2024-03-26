@@ -1,6 +1,9 @@
 <#import "sqlExport-where.ftlh" as sqlExportWhere>
 
-<#macro tableOrViewSelect tableOrView>
+<#--------------------------------------------------------------
+Create the select query
+--------------------------------------------------------------->
+<#macro tableOrViewSelectQuery tableOrView>
 SELECT
     <#list tableOrView.columns?sort_by("ordinal") as column>
     ${column.label}<#sep>,

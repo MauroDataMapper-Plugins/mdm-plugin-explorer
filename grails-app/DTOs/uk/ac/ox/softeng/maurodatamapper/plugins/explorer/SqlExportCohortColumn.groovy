@@ -17,22 +17,32 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
 
-class MeqlRule extends MeqlRuleBase {
-    String field
-    String dataType
-    String operator
-    String value
+class SqlExportCohortColumn extends SqlExportColumn {
 
-    MeqlRule(String entity, String field, String dataType, String operator, String value) {
-        super(entity)
-        this.field = field
+    protected String dataType
+    protected Boolean primaryKey = false
+
+    SqlExportCohortColumn(String label, int ordinal, String dataType, Boolean primaryKey = false) {
+        super(label, ordinal)
         this.dataType = dataType
-        this.operator = operator
-        this.value = value
+        this.primaryKey = primaryKey
     }
 
-    @Override
-    MeqlType getMeqlType() {
-        return MeqlType.Rule
+    String getDataType() {
+        dataType
+    }
+
+    Boolean getPrimaryKey() {
+        primaryKey
+    }
+
+    String getLabelColumnName() {
+        def nameParts = label.split('\\.')
+        def extractColumnName = nameParts.last()
+        if (!extractColumnName) {
+            return null
+        }
+        extractColumnName = extractColumnName.replace('[','').replace(']','')
+        extractColumnName
     }
 }

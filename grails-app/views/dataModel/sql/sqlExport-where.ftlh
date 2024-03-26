@@ -28,6 +28,9 @@ Format Value Function
 		<#case "int">
 			<#local formattedValue = "${value}">
 			<#break>
+		<#case "date">
+			<#local formattedValue = "convert(date, '${value}', 103)">
+			<#break>
 		<#case "datetime">
 			<#local formattedValue = "convert(datetime, '${value}', 103)">
 			<#break>
@@ -148,9 +151,11 @@ The Main template
         <#list joinList as join>
             <#assign join_json = join.json?eval_json>
             JOIN<#lt>
-            <@indentSingleLine line = join_json.join/>
+            <@indentSingleLine line = join_json.table/>
             ON<#lt>
-            <@indentSingleLine line = join_json.on/>
+            <#list join_json.on as on>
+                <@indentSingleLine line = on/>
+            </#list>
         </#list>
         <#list whereList as where>
             <#assign where_json = where.json?eval_json>

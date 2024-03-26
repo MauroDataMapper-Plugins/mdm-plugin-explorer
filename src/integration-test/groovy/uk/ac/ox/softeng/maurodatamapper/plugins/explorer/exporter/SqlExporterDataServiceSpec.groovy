@@ -20,31 +20,27 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.IntegrationTestGivens
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExporterTestDataModel
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportDataService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.provider.exporter.DataModelSqlExporterService
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportDataService
 import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
 import uk.ac.ox.softeng.maurodatamapper.security.User
 import uk.ac.ox.softeng.maurodatamapper.test.integration.BaseIntegrationSpec
 
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
+import groovy.json.JsonOutput
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 
 @Integration
 @Slf4j
 @Rollback
-class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
-
-    private DataModelSqlExporterService sut
+class SqlExporterDataServiceSpec extends BaseIntegrationSpec {
 
     IntegrationTestGivens given
     SqlExporterTestDataModel givenDataModel
 
     User testUser
-
-    @Autowired
-    DataModelService dataModelService
 
     @Autowired
     SqlExportDataService sqlExportDataService
@@ -55,12 +51,6 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
     def setup() {
         given = new IntegrationTestGivens(messageSource, profileService)
         givenDataModel = new SqlExporterTestDataModel(messageSource, profileService)
-
-        sqlExportDataService
-
-        sut = new DataModelSqlExporterService()
-        sut.dataModelService = dataModelService
-        sut.sqlExportDataService = sqlExportDataService
     }
 
     @Override
@@ -94,20 +84,19 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
         checkAndSave(dataModel)
 
         when: "the data model is exported"
-        ByteArrayOutputStream outputStream = sut.exportDomain(testUser, dataModel.id, [:])
+        def sqlExportTables = sqlExportDataService.prepareSqlExport(dataModel)
+        def sqlExportJson = JsonOutput.toJson(sqlExportTables)
+        def sqlExportJsonFormatted = JsonOutput.prettyPrint(sqlExportJson)
 
         then: "the expected sql script is returned"
-        InputStream sampleDdlScriptStream = this.class.getResourceAsStream("/exporter/${testName}/sql-export.sql")
+        InputStream sampleDdlScriptStream = this.class.getResourceAsStream("/exporter/${testName}/sql-export.json")
         def expectedOutput = new BufferedReader(new InputStreamReader(sampleDdlScriptStream))
             .readLines()
             .join("\n")
             .trim()
 
-        // Make sure line endings are consistent before comparison
-        String actualOutput = outputStream.toString("UTF-8").trim().replaceAll("\r\n", "\n")
-
         with {
-            actualOutput == expectedOutput
+            sqlExportJsonFormatted == expectedOutput
         }
 
         where:
