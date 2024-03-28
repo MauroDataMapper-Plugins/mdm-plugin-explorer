@@ -12,4 +12,7 @@ dependencies {
     runtimeOnly "org.hibernate:hibernate-jcache"
     runtimeOnly group: 'org.ehcache', name: 'ehcache'
     runtimeOnly group: 'org.postgresql', name: 'postgresql'
+
+    // SQL Exporter
+    implementation "org.freemarker:freemarker:2.3.32"
 }

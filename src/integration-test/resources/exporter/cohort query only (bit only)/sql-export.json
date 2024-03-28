@@ -1,0 +1,128 @@
+{
+    "cohortTableOrView": {
+        "rules": [
+            {
+                "label": "where",
+                "json": "{\"rules\":[{\"value\":\"true\",\"dataType\":\"bit\",\"entity\":\"people.patients\",\"operator\":\"=\",\"meqlType\":\"Rule\",\"field\":\"exercisesRegularly\"}],\"entity\":\"people.patients\",\"meqlType\":\"RuleSet\",\"condition\":\"and\"}"
+            }
+        ],
+        "tempTableName": "#cohort",
+        "columns": [
+            {
+                "dataType": "int",
+                "ordinal": "0",
+                "primaryKey": true,
+                "label": "[people].[patients].[id]",
+                "labelColumnName": "id"
+            }
+        ],
+        "label": "[people].[patients]"
+    },
+    "tableOrViews": [
+        {
+            "rules": [
+                {
+                    "label": "join",
+                    "json": "{\"table\":\"[#cohort]\",\"on\":[\"[#cohort].[id] = [people].[patients].[id]\"]}"
+                }
+            ],
+            "columns": [
+                {
+                    "ordinal": "6",
+                    "label": "[people].[patients].[exercisesRegularly]"
+                },
+                {
+                    "ordinal": "5",
+                    "label": "[people].[patients].[height]"
+                },
+                {
+                    "ordinal": "4",
+                    "label": "[people].[patients].[age]"
+                },
+                {
+                    "ordinal": "3",
+                    "label": "[people].[patients].[dateOfBirth]"
+                },
+                {
+                    "ordinal": "2",
+                    "label": "[people].[patients].[surname]"
+                },
+                {
+                    "ordinal": "1",
+                    "label": "[people].[patients].[forename]"
+                },
+                {
+                    "ordinal": "0",
+                    "label": "[people].[patients].[id]"
+                }
+            ],
+            "label": "[people].[patients]"
+        },
+        {
+            "rules": [
+                {
+                    "label": "join",
+                    "json": "{\"table\":\"[#cohort]\",\"on\":[\"[#cohort].[id] = [medical].[episodes].[patientId]\"]}"
+                }
+            ],
+            "columns": [
+                {
+                    "ordinal": "5",
+                    "label": "[medical].[episodes].[do_not_include]"
+                },
+                {
+                    "ordinal": "4",
+                    "label": "[medical].[episodes].[occurredAt]"
+                },
+                {
+                    "ordinal": "3",
+                    "label": "[medical].[episodes].[score]"
+                },
+                {
+                    "ordinal": "2",
+                    "label": "[medical].[episodes].[description]"
+                },
+                {
+                    "ordinal": "1",
+                    "label": "[medical].[episodes].[patientId]"
+                },
+                {
+                    "ordinal": "0",
+                    "label": "[medical].[episodes].[id]"
+                }
+            ],
+            "label": "[medical].[episodes]"
+        },
+        {
+            "rules": [
+                {
+                    "label": "join",
+                    "json": "{\"table\":\"[#cohort]\",\"on\":[\"[#cohort].[id] = [medical].[treatments].[patientId]\"]}"
+                }
+            ],
+            "columns": [
+                {
+                    "ordinal": "4",
+                    "label": "[medical].[treatments].[do_not_include]"
+                },
+                {
+                    "ordinal": "3",
+                    "label": "[medical].[treatments].[givenOn]"
+                },
+                {
+                    "ordinal": "2",
+                    "label": "[medical].[treatments].[description]"
+                },
+                {
+                    "ordinal": "1",
+                    "label": "[medical].[treatments].[patientId]"
+                },
+                {
+                    "ordinal": "0",
+                    "label": "[medical].[treatments].[id]"
+                }
+            ],
+            "label": "[medical].[treatments]"
+        }
+    ]
+}

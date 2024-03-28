@@ -109,6 +109,7 @@ grails {
         implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-plugin-datamodel', version: mdmCoreVersion
         implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-plugin-profile', version: mdmCoreVersion
         implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-security', version: mdmCoreVersion
+        implementation group: 'uk.ac.ox.softeng.maurodatamapper.plugins', name: 'mdm-plugin-database-sqlserver', version: '8.3.0-SNAPSHOT'
     }
 }
 

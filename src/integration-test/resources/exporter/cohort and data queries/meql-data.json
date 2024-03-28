@@ -1,0 +1,76 @@
+{
+    "rules": [
+        {
+            "rules": [
+                {
+                    "value": "true",
+                    "dataType": "bit",
+                    "entity": "medical.episodes",
+                    "operator": "=",
+                    "meqlType": "Rule",
+                    "field": "do_not_include"
+                },
+                {
+                    "value": "false",
+                    "dataType": "bit",
+                    "entity": "medical.episodes",
+                    "operator": "=",
+                    "meqlType": "Rule",
+                    "field": "do_not_include"
+                }
+            ],
+            "entity": "medical.episodes",
+            "meqlType": "RuleSet",
+            "condition": "or"
+        },
+        {
+            "rules": [
+                {
+                    "value": "01/01/2023 12:01:01",
+                    "dataType": "datetime",
+                    "entity": "medical.treatments",
+                    "operator": ">",
+                    "meqlType": "Rule",
+                    "field": "givenOn"
+                },
+                {
+                    "value": "31/12/2023 23:59:59",
+                    "dataType": "datetime",
+                    "entity": "medical.treatments",
+                    "operator": "<",
+                    "meqlType": "Rule",
+                    "field": "givenOn"
+                }
+            ],
+            "entity": "medical.treatments",
+            "meqlType": "RuleSet",
+            "condition": "and"
+        },
+        {
+            "rules": [
+                {
+                    "value": "18",
+                    "dataType": "int",
+                    "entity": "people.patients",
+                    "operator": ">",
+                    "meqlType": "Rule",
+                    "field": "age"
+                },
+                {
+                    "value": "65",
+                    "dataType": "int",
+                    "entity": "people.patients",
+                    "operator": "<",
+                    "meqlType": "Rule",
+                    "field": "age"
+                }
+            ],
+            "entity": "people.patients",
+            "meqlType": "RuleSet",
+            "condition": "and"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

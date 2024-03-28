@@ -1,0 +1,38 @@
+{
+    "rules": [
+        {
+            "value": "01/01/1960",
+            "dataType": "date",
+            "entity": "people.patients",
+            "operator": ">",
+            "meqlType": "Rule",
+            "field": "dateOfBirth"
+        },
+        {
+            "rules": [
+                {
+                    "value": "25/12/2020 08:00:00",
+                    "dataType": "datetime",
+                    "entity": "medical.episodes",
+                    "operator": "=",
+                    "meqlType": "Rule",
+                    "field": "occurredAt"
+                },
+                {
+                    "value": "[1, 2, 9, 10]",
+                    "dataType": "decimal",
+                    "entity": "medical.episodes",
+                    "operator": "not in",
+                    "meqlType": "Rule",
+                    "field": "score"
+                }
+            ],
+            "entity": "medical.episodes",
+            "meqlType": "RuleSet",
+            "condition": "and"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}
