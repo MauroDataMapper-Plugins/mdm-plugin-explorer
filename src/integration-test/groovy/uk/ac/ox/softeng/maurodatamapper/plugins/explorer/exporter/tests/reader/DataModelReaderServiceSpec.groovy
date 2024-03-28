@@ -15,9 +15,9 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.tests.reader
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.IntegrationTestGivens
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader.DataModelReaderService
 import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
 import uk.ac.ox.softeng.maurodatamapper.security.User

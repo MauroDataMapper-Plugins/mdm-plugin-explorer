@@ -22,6 +22,10 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 
 class DataModelReaderService {
+    /**
+     * Find and return a DataClass from the DataModel by finding a DataClass that matches the schema name
+     * and then then finding a child of that DataClass that matches the table name.
+     */
     static DataClass getDataClass(DataModel dataModel, String schemaName, String tableName) {
         def referenceSchema = dataModel.childDataClasses.find {it.label == schemaName.trim()}
         if (!referenceSchema) {
@@ -30,6 +34,9 @@ class DataModelReaderService {
         return referenceSchema.findDataClass(tableName)
     }
 
+    /**
+     * Return a DataElement from a DataClass that's label matches the passed in date element name
+     */
     static DataElement getDataElement(DataClass dataClass, String dataElementName) {
         return dataClass.dataElements.find{it.label == dataElementName.trim()}
     }

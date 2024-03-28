@@ -15,17 +15,17 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.updater
 
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRuleBase
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRuleSet
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportData
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportCohortTableOrView
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportRule
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportTableOrView
 
 import groovy.json.JsonOutput
 
-class SqlExportRuleService {
+class SqlExportRuleUpdaterService {
     static addRule(MeqlRuleBase rule, SqlExportTableOrView sqlExportTableOrView) {
         if (!rule) {
             return
@@ -34,17 +34,10 @@ class SqlExportRuleService {
         sqlExportTableOrView.rules.add(new SqlExportRule('where', entityRulesJson))
     }
 
-    static addCohortRules(SqlExportData sqlExportData) {
-        sqlExportData.cohortRuleGroup.each(rule -> {
-            addRule(rule, sqlExportData.sqlExportTables.cohortTableOrView)
+    static addCohortRules(MeqlRuleSet cohortRuleSet, SqlExportCohortTableOrView cohortTableOrView) {
+        cohortRuleSet.each(rule -> {
+            addRule(rule, cohortTableOrView)
         })
     }
 
-    static addDataTableRule(String entity, MeqlRuleSet dataRuleGroup, SqlExportTableOrView sqlExportTableOrView) {
-        def rule = dataRuleGroup?.rules?.find {rule ->
-            (rule as MeqlRuleSet).entity == entity
-        }
-
-        addRule(rule, sqlExportTableOrView)
-    }
 }

@@ -15,27 +15,22 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.preparer
 
-class SqlExportColumn {
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRuleBase
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRuleSet
 
-    protected String label
-    protected int ordinal
+class SqlExportRulePreparerService {
 
-    SqlExportColumn(String label) {
-        this.label = label
+    /**
+     * Get a rule for the passed in entity name
+     * @param entity
+     * @param dataRuleSet
+     * @return
+     */
+    static MeqlRuleBase getRuleForEntity(String entity, MeqlRuleSet dataRuleSet) {
+        dataRuleSet?.rules?.find {rule ->
+            (rule as MeqlRuleSet).entity == entity
+        }
     }
-
-    String getLabel() {
-        label
-    }
-
-    String getOrdinal() {
-        ordinal
-    }
-
-    String setOrdinal(int ordinal) {
-        this.ordinal = ordinal
-    }
-
 }

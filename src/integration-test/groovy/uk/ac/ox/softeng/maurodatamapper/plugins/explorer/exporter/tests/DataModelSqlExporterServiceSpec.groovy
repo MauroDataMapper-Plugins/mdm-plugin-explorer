@@ -15,13 +15,12 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.tests
 
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.IntegrationTestGivens
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExporterTestDataModel
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.provider.exporter.DataModelSqlExporterService
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportDataService
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestDataModel
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestHelper
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportTableBuilderService
 import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
 import uk.ac.ox.softeng.maurodatamapper.security.User
 import uk.ac.ox.softeng.maurodatamapper.test.integration.BaseIntegrationSpec
@@ -35,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired
 @Integration
 @Slf4j
 @Rollback
-class SqlExporterDataServiceSpec extends BaseIntegrationSpec {
+class DataModelSqlExporterServiceSpec extends BaseIntegrationSpec {
 
     IntegrationTestGivens given
     SqlExporterTestDataModel givenDataModel
@@ -43,7 +42,7 @@ class SqlExporterDataServiceSpec extends BaseIntegrationSpec {
     User testUser
 
     @Autowired
-    SqlExportDataService sqlExportDataService
+    SqlExportTableBuilderService sqlExportDataService
 
     @Autowired
     ProfileService profileService
@@ -89,11 +88,8 @@ class SqlExporterDataServiceSpec extends BaseIntegrationSpec {
         def sqlExportJsonFormatted = JsonOutput.prettyPrint(sqlExportJson)
 
         then: "the expected sql script is returned"
-        InputStream sampleDdlScriptStream = this.class.getResourceAsStream("/exporter/${testName}/sql-export.json")
-        def expectedOutput = new BufferedReader(new InputStreamReader(sampleDdlScriptStream))
-            .readLines()
-            .join("\n")
-            .trim()
+        SqlExporterTestHelper sqlExporterTestHelper = new SqlExporterTestHelper()
+        def expectedOutput = sqlExporterTestHelper.loadJsonFile(testName, "sql-export.json")
 
         with {
             sqlExportJsonFormatted == expectedOutput

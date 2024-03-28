@@ -15,7 +15,7 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader
 
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRule
@@ -25,10 +25,19 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlType
 
 import groovy.json.JsonSlurper
 
+import javax.xml.crypto.Data
 
-class MeqlService {
-    static getMeqlRuleGroups(DataModel dataModel) {
-        def ruleGroups = dataModel.rules
+
+class MeqlReaderService {
+
+    /**
+     * Transform all MeqlRules in a DataModel into strongly typed objects so that they are
+     * easier to process.
+     * @param dataModel
+     * @return
+     */
+    static getMeqlRuleSets(DataModel dataModel) {
+        def ruleSets = dataModel.rules
             .findAll { rule -> rule.name in ['cohort', 'data'] }
             .collectMany { rule ->
                 rule.ruleRepresentations
@@ -40,34 +49,19 @@ class MeqlService {
             .collectEntries {ruleNameAndMeqlRuleSetEntries ->
                 [ruleNameAndMeqlRuleSetEntries.key, ruleNameAndMeqlRuleSetEntries.value.first()[1]] }
 
-        return new Tuple(ruleGroups.get('cohort'), ruleGroups.get('data'))
+        return new Tuple(ruleSets.get('cohort'), ruleSets.get('data'))
     }
 
-    static List<String> getDistinctEntities(MeqlRuleSet entityRules) {
-
-        // Extract distinct "entity" values from the JSON object
-        def distinctEntities = extractEntities(entityRules.rules)
-
-        // Remove duplicates and print the distinct "entity" values
-        distinctEntities.unique()
-    }
-
-    // Function to extract distinct "entity" values from a rules object
-    static private List<String> extractEntities(List<MeqlRuleBase> entityRules) {
-        List<String> entities = []
-        entityRules.each { ruleObject ->
-            entities << ruleObject.entity
-            if (ruleObject.meqlType == MeqlType.RuleSet) {
-                entities.addAll(extractEntities((ruleObject as MeqlRuleSet).rules))
-            }
-        }
-        return entities
-    }
-
+    /**
+     * Transform a json rule representation to a strongly typed object.
+     * @param representation
+     * @param dataModel
+     * @return
+     */
     static private MeqlRuleSet transformJsonStringToMeql(String representation, DataModel dataModel) {
         def meqlJsonObject = new JsonSlurper().parseText(representation)
-        def rootRuleGroup = convertToTypedObject(meqlJsonObject, dataModel)
-        rootRuleGroup as MeqlRuleSet
+        def rootRuleSet = convertToTypedObject(meqlJsonObject, dataModel)
+        rootRuleSet as MeqlRuleSet
     }
 
     static private MeqlRuleBase convertToTypedObject(def json, DataModel dataModel) {
@@ -76,7 +70,7 @@ class MeqlService {
         }
 
         if (json.containsKey('condition')) {
-            // Convert to MeqlRuleGroup
+            // Convert to MeqlRuleSet
             return new MeqlRuleSet(
                 json.condition as String,
                 json.entity as String,
@@ -86,7 +80,7 @@ class MeqlService {
 
         if (json.containsKey('field') && json.containsKey('operator') && json.containsKey('value')) {
             // Get the type
-            def dataType = getMeqlDataType(json, dataModel)
+            def dataType = getSQLDataType(json, dataModel)
             // Convert to MeqlRule
             return new MeqlRule(
                 json.entity as String,
@@ -100,11 +94,20 @@ class MeqlService {
         return null
     }
 
-    static private String getMeqlDataType(def json, DataModel dataModel) {
+    /**
+     * Get the SQL data type from the data model. This is required by the templating code
+     * to identify how to format data when building the where clause.
+     * @param json
+     * @param dataModel
+     * @return
+     */
+    static private String getSQLDataType(def json, DataModel dataModel) {
         def entityParts = (json.entity as String).split('\\.')
-        def dataSchema = dataModel.dataClasses.find((dataClass) -> {dataClass.label == entityParts[0]})
-        def dataTable = dataSchema.dataClasses.find((dataClass) -> {dataClass.label == entityParts[1]})
-        def dataElement = dataTable.dataElements.find((dataElement) -> {dataElement.label == json.field as String})
+        // def dataSchema = dataModel.dataClasses.find((dataClass) -> {dataClass.label == entityParts[0]})
+        // def dataTable = dataSchema.dataClasses.find((dataClass) -> {dataClass.label == entityParts[1]})
+        def dataTable = DataModelReaderService.getDataClass(dataModel, entityParts[0], entityParts[1])
+        // def dataElement = dataTable.dataElements.find((dataElement) -> {dataElement.label == json.field as String})
+        def dataElement = DataModelReaderService.getDataElement(dataTable, json.field as String)
         def dataType =  (dataElement.dataType.domainType == "PrimitiveType") ? dataElement.dataType.label : 'NOT_PRIMITIVE'
         dataType
     }

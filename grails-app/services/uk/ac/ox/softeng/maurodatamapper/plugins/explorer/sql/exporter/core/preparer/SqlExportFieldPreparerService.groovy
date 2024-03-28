@@ -19,9 +19,8 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.prep
 
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportCohortColumn
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportCohortTableOrView
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportColumn
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportData
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportTableOrView
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader.DataModelReaderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader.ProfileReaderService
 
@@ -31,44 +30,90 @@ class SqlExportFieldPreparerService {
     @Autowired
     ProfileReaderService profileReaderService;
 
-    void getCohortPrimaryKey(DataClass dataClass) {
-        def primaryKeys = profileReaderService.getPrimaryKeys(sqlExportData.cohortDataClass)
+    /**
+     * Return a list of all primary keys that exist on the cohort table
+     * @param cohortTableOrView
+     * @param cohortDataClass
+     * @return
+     */
+    SqlExportCohortColumn[] getCohortPrimaryKeys(SqlExportCohortTableOrView cohortTableOrView, DataClass cohortDataClass) {
+        if (!cohortDataClass) {
+            return []
+        }
 
-        primaryKeys.each(primaryKeyColumnName -> {
-            addColumnToCohort(sqlExportData, "${primaryKeyColumnName}", true)
-        })
+        def primaryKeys = profileReaderService.getPrimaryKeys(cohortDataClass)
 
+        (SqlExportCohortColumn[]) primaryKeys.collect { primaryKeyColumnName ->
+            getCohortColumn(cohortTableOrView, cohortDataClass, primaryKeyColumnName, true)
+        }.toArray()
     }
 
-    static void addColumnToCohort(SqlExportData sqlExportData, String columnName, Boolean primaryKey = false) {
-        // If the table or view is not defined return without doing anything
-        if (!sqlExportData.sqlExportTables.cohortTableOrView) {
+    /**
+     * Find a column in the cohort table and return the SQL Server information about that column.
+     * This information is:
+     *  - The SQL Server data type
+     *  - Whether it is a primary key or not
+     * @param cohortTableOrView
+     * @param cohortDataClass
+     * @param columnName
+     * @param primaryKey
+     * @return
+     */
+    static SqlExportCohortColumn getCohortColumn(SqlExportCohortTableOrView cohortTableOrView, DataClass cohortDataClass, String columnName, Boolean primaryKey = false) {
+
+        if (!cohortTableOrView) {
             return
         }
 
-        // Build the prefixed column name
-        def schemaName = sqlExportData.cohortDataClass.parentDataClass.label
-        def tableName = sqlExportData.cohortDataClass.label
-        def prefixedColumnName = "[${schemaName}].[${tableName}].[${columnName}]"
-
-        // If the column already exists then return without doing anything
-        def columnExists = sqlExportData.sqlExportTables.cohortTableOrView.columns.find(column -> column.label == prefixedColumnName)
-        if (columnExists) {
+        if (!cohortDataClass) {
             return
         }
 
-        // Add the column to the list of Cohort columns
-        def dataElement = DataModelReaderService.getDataElement(sqlExportData.cohortDataClass, columnName)
+        def prefixedColumnName = getPrefixedColumnName(columnName, cohortDataClass)
+        def dataElement = DataModelReaderService.getDataElement(cohortDataClass, columnName)
 
-        sqlExportData.sqlExportTables.cohortTableOrView.columns.push(
-            new SqlExportCohortColumn(prefixedColumnName, sqlExportData.sqlExportTables.cohortTableOrView.columns.size(), dataElement.dataType.label, primaryKey))
+        return new SqlExportCohortColumn(prefixedColumnName, dataElement.dataType.label, primaryKey)
 
     }
 
-    static void addDataTableField(DataClass schema, DataClass tableOrView, SqlExportTableOrView sqlExportTableOrView) {
-        tableOrView.dataElements.each((dataElement) -> {
-            sqlExportTableOrView.columns.push(
-                new SqlExportColumn("[${schema.label}].[${tableOrView.label}].[${dataElement.label}]", sqlExportTableOrView.columns.size()))
-        })
+    /**
+     * Return a list of all columns prefixed with schema name and class name for a passed in SQL Export table
+     * @param tableOrView
+     * @return
+     */
+    static SqlExportColumn[] getSqlExportColumns(DataClass tableOrView) {
+        if (!tableOrView) {
+            return []
+        }
+
+        DataClass schema = tableOrView.parentDataClass
+
+        if (!schema) {
+            return []
+        }
+
+        (SqlExportColumn[]) tableOrView.dataElements.collect { dataElement ->
+            new SqlExportColumn("[${schema.label}].[${tableOrView.label}].[${dataElement.label}]")
+        }.toArray()
+
+    }
+
+    /**
+     * Return a column name that is prefixed with the schema name and table name that the column belongs to.
+     * i.e: [schemaName].[tableName].[columnName]
+     * @param columnName
+     * @param dataClass
+     * @return
+     */
+    private static String getPrefixedColumnName(String columnName, DataClass dataClass) {
+        if (!columnName) {
+            return []
+        }
+
+        if (!dataClass) {
+            return []
+        }
+
+        "[${dataClass.parentDataClass.label}].[${dataClass.label}].[${columnName}]"
     }
 }

@@ -15,12 +15,13 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.tests
 
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.IntegrationTestGivens
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExporterTestDataModel
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportDataService
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestDataModel
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestHelper
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportTableBuilderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.provider.exporter.DataModelSqlExporterService
 import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
 import uk.ac.ox.softeng.maurodatamapper.security.User
@@ -40,6 +41,7 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
 
     IntegrationTestGivens given
     SqlExporterTestDataModel givenDataModel
+    SqlExporterTestHelper sqlExporterTestHelper
 
     User testUser
 
@@ -47,7 +49,7 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
     DataModelService dataModelService
 
     @Autowired
-    SqlExportDataService sqlExportDataService
+    SqlExportTableBuilderService sqlExportDataService
 
     @Autowired
     ProfileService profileService
@@ -55,6 +57,7 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
     def setup() {
         given = new IntegrationTestGivens(messageSource, profileService)
         givenDataModel = new SqlExporterTestDataModel(messageSource, profileService)
+        sqlExporterTestHelper = new SqlExporterTestHelper()
 
         sqlExportDataService
 
@@ -77,18 +80,10 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
         def dataModel = givenDataModel."baseline data for testing sql exports"(testUser, folder)
 
         // Load queries
-        InputStream cohortQueryStream = this.class.getResourceAsStream("/exporter/${testName}/cohort-query.json")
-        def cohortQuery = new BufferedReader(new InputStreamReader(cohortQueryStream))
-            .readLines()
-            .join("\n")
-            .trim()
+        def cohortQuery = sqlExporterTestHelper.loadJsonFile(testName, "cohort-query.json")
         given."there is a rule with a representation"("cohort",dataModel,"json-meql",cohortQuery)
 
-        InputStream dataQueryStream = this.class.getResourceAsStream("/exporter/${testName}/data-query.json")
-        def dataQuery = new BufferedReader(new InputStreamReader(dataQueryStream))
-            .readLines()
-            .join("\n")
-            .trim()
+        def dataQuery = sqlExporterTestHelper.loadJsonFile(testName, "data-query.json")
         given."there is a rule with a representation"("data",dataModel,"json-meql",dataQuery)
 
         checkAndSave(dataModel)
@@ -97,11 +92,7 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
         ByteArrayOutputStream outputStream = sut.exportDomain(testUser, dataModel.id, [:])
 
         then: "the expected sql script is returned"
-        InputStream sampleDdlScriptStream = this.class.getResourceAsStream("/exporter/${testName}/sql-export.sql")
-        def expectedOutput = new BufferedReader(new InputStreamReader(sampleDdlScriptStream))
-            .readLines()
-            .join("\n")
-            .trim()
+        def expectedOutput = sqlExporterTestHelper.loadJsonFile(testName, "sql-export.sql")
 
         // Make sure line endings are consistent before comparison
         String actualOutput = outputStream.toString("UTF-8").trim().replaceAll("\r\n", "\n")

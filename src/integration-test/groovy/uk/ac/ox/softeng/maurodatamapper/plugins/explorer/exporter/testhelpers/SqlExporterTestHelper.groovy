@@ -15,27 +15,15 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.explorer
+package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers
 
-class SqlExportColumn {
-
-    protected String label
-    protected int ordinal
-
-    SqlExportColumn(String label) {
-        this.label = label
+class SqlExporterTestHelper {
+    String loadJsonFile(String testName, String fileName) {
+        InputStream resourceStream = this.class.getResourceAsStream("/exporter/${testName}/${fileName}")
+        def jsonString = new BufferedReader(new InputStreamReader(resourceStream))
+            .readLines()
+            .join("\n")
+            .trim()
+        jsonString
     }
-
-    String getLabel() {
-        label
-    }
-
-    String getOrdinal() {
-        ordinal
-    }
-
-    String setOrdinal(int ordinal) {
-        this.ordinal = ordinal
-    }
-
 }

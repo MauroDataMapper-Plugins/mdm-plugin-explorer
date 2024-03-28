@@ -21,13 +21,12 @@ import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.exporter.DataModelExporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportTables
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportDataService
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportTableBuilderService
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
 import freemarker.template.Configuration
 import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
-import groovy.json.JsonOutput
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -37,7 +36,7 @@ class DataModelSqlExporterService extends DataModelExporterProviderService {
     public static final CONTENT_TYPE = 'application/mauro.datamodel+sql'
 
     @Autowired
-    SqlExportDataService sqlExportDataService
+    SqlExportTableBuilderService sqlExportDataService
 
     @Override
     String getDisplayName() {
@@ -72,7 +71,6 @@ class DataModelSqlExporterService extends DataModelExporterProviderService {
     @Override
     ByteArrayOutputStream exportDataModel(User currentUser, DataModel dataModel, Map<String, Object> parameters) throws ApiException {
         def sqlExportTables = sqlExportDataService.prepareSqlExport(dataModel)
-        def json = JsonOutput.toJson(sqlExportTables)
         generateDdl(sqlExportTables)
     }
 

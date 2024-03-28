@@ -22,8 +22,8 @@ class SqlExportCohortColumn extends SqlExportColumn {
     protected String dataType
     protected Boolean primaryKey = false
 
-    SqlExportCohortColumn(String label, int ordinal, String dataType, Boolean primaryKey = false) {
-        super(label, ordinal)
+    SqlExportCohortColumn(String label, String dataType, Boolean primaryKey = false) {
+        super(label)
         this.dataType = dataType
         this.primaryKey = primaryKey
     }
@@ -35,6 +35,7 @@ class SqlExportCohortColumn extends SqlExportColumn {
     Boolean getPrimaryKey() {
         primaryKey
     }
+
 
     String getLabelColumnName() {
         def nameParts = label.split('\\.')
