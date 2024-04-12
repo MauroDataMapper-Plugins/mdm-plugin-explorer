@@ -41,7 +41,7 @@ class MeqlPreparerServiceSpec extends BaseIntegrationSpec {
 
     void "no entities are found when there are no rules"() {
 
-        given: "there is a meql data"
+        given: "there is meql data"
         def meqlRuleSet = given."there is a MeqlRuleSet"("and", "parentEntity", [])
 
         when: "we get distinct entities"
@@ -58,7 +58,7 @@ class MeqlPreparerServiceSpec extends BaseIntegrationSpec {
 
     void "one entity is found when there is one rule"() {
 
-        given: "there is a meql data"
+        given: "there is meql data"
         def meqlRule = given."there is a basic MeqlRule"("entityA", "fieldA",)
         def meqlRuleSet = given."there is a MeqlRuleSet"("and", "parentEntity", [meqlRule])
 
@@ -77,7 +77,7 @@ class MeqlPreparerServiceSpec extends BaseIntegrationSpec {
 
     void "one entity is found when there are multiple rules referencing the same entity"() {
 
-        given: "there is a meql data"
+        given: "there is meql data"
         def meqlRule = given."there is a basic MeqlRule"("entityA", "fieldA")
         def meqlRule2 = given."there is a basic MeqlRule"("entityA", "fieldB")
         def meqlRule3 = given."there is a basic MeqlRule"("entityA", "fieldC")
@@ -98,7 +98,7 @@ class MeqlPreparerServiceSpec extends BaseIntegrationSpec {
 
     void "two entities are found when there are multiple rules referencing two entities"() {
 
-        given: "there is a meql data"
+        given: "there is meql data"
         def meqlRule = given."there is a basic MeqlRule"("entityA", "fieldA")
         def meqlRule2 = given."there is a basic MeqlRule"("entityA", "fieldB")
         def meqlRule3 = given."there is a basic MeqlRule"("entityA", "fieldC")

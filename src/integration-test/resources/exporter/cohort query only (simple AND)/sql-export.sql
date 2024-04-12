@@ -51,6 +51,7 @@ GO
 SELECT
     [medical].[treatments].[id],
     [medical].[treatments].[patientId],
+    [medical].[treatments].[episodeId],
     [medical].[treatments].[description],
     [medical].[treatments].[givenOn],
     [medical].[treatments].[do_not_include]

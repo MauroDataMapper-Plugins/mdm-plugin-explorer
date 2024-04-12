@@ -1,0 +1,37 @@
+{
+    "rules": [
+        {
+            "rules": [
+                {
+                    "value": "25/12/2020",
+                    "dataType": "datetime",
+                    "entity": "medical.episodes",
+                    "operator": "=",
+                    "meqlType": "Rule",
+                    "field": "occurredAt"
+                }
+            ],
+            "entity": "medical.episodes",
+            "meqlType": "RuleSet",
+            "condition": "and"
+        },
+        {
+            "rules": [
+                {
+                    "value": "01/01/2023 12:01:01",
+                    "dataType": "datetime",
+                    "entity": "medical.treatments",
+                    "operator": "=",
+                    "meqlType": "Rule",
+                    "field": "givenOn"
+                }
+            ],
+            "entity": "medical.treatments",
+            "meqlType": "RuleSet",
+            "condition": "and"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

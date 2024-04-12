@@ -23,28 +23,31 @@ Format Value Function
 --------------------------------------------------------------->
 <#function formatValue value dataType>
 	<#local formattedValue = "">
-    <#switch dataType >
-		<#case "decimal">
-		<#case "int">
-			<#local formattedValue = "${value}">
-			<#break>
-		<#case "date">
-			<#local formattedValue = "convert(date, '${value}', 103)">
-			<#break>
-		<#case "datetime">
-			<#local formattedValue = "convert(datetime, '${value}', 103)">
-			<#break>
-		<#case "bit">
-		    <#if value?upper_case == "TRUE" >
-		        <#local formattedValue = "1">
-		    <#else>
-		        <#local formattedValue = "0">
-		    </#if>
-		    <#break>
-        <#case "varchar">
-		<#default>
-			 <#local formattedValue = "'${value}'">
-    </#switch>
+	<#if value??>
+	    formattedValue = "IS NULL"
+        <#switch dataType >
+            <#case "decimal">
+            <#case "int">
+                <#local formattedValue = "${value}">
+                <#break>
+            <#case "date">
+                <#local formattedValue = "convert(date, '${value}', 103)">
+                <#break>
+            <#case "datetime">
+                <#local formattedValue = "convert(datetime, '${value}', 103)">
+                <#break>
+            <#case "bit">
+                <#if value?upper_case == "TRUE" >
+                    <#local formattedValue = "1">
+                <#else>
+                    <#local formattedValue = "0">
+                </#if>
+                <#break>
+            <#case "varchar">
+            <#default>
+                 <#local formattedValue = "'${value}'">
+        </#switch>
+    </#if>
 	<#return formattedValue>
 </#function>
 
@@ -52,30 +55,34 @@ Format Value Function
 <#--------------------------------------------------------------
 Translate Operator Function
 --------------------------------------------------------------->
-<#function translateOperator operator value, dataType>
+<#function translateOperator operator value dataType>
 	<#local operatorLine = "">
-    <#switch operator >
-		<#case "endswith">
-			<#local operatorLine = "LIKE '%${value}'">
-			<#break>
-		<#case "startswith">
-			<#local operatorLine = "LIKE '${value}%'">
-			<#break>
-		<#case "in">
-			<#local value = value?replace("[","(")?replace("]",")")>
-			<#local operatorLine = "IN ${value}">
-			<#break>
-		<#case "not in">
-			<#local value = value?replace("[","(")?replace("]",")")>
-			<#local operatorLine = "IN ${value}">
-			<#break>
-		<#case "like">
-		<#case "contains">
-			<#local operatorLine = "LIKE '%${value}%'">
-			<#break>
-		<#default>
-			 <#local operatorLine = "${operator?trim} ${formatValue(value, dataType)}">
-    </#switch>
+	<#if value == "NULL">
+	    <#local operatorLine = "IS NULL">
+	<#else>
+        <#switch operator >
+            <#case "endswith">
+                <#local operatorLine = "LIKE '%${value}'">
+                <#break>
+            <#case "startswith">
+                <#local operatorLine = "LIKE '${value}%'">
+                <#break>
+            <#case "in">
+                <#local value = value?replace("[","(")?replace("]",")")>
+                <#local operatorLine = "IN ${value}">
+                <#break>
+            <#case "not in">
+                <#local value = value?replace("[","(")?replace("]",")")>
+                <#local operatorLine = "IN ${value}">
+                <#break>
+            <#case "like">
+            <#case "contains">
+                <#local operatorLine = "LIKE '%${value}%'">
+                <#break>
+            <#default>
+                 <#local operatorLine = "${operator?trim} ${formatValue(value, dataType)}">
+        </#switch>
+    </#if>
 	<#return operatorLine>
 </#function>
 
@@ -84,7 +91,8 @@ Where clause line function
 --------------------------------------------------------------->
 <#function whereClauseLine queryRule>
     <#local schemaAndTable = queryRule.entity?replace(".","].[") />
-	<#local whereLine = "[${schemaAndTable}].[${queryRule.field}] ${translateOperator(queryRule.operator,queryRule.value, queryRule.dataType)?no_esc}">
+    <#local defaultValue = "NULL" />
+	<#local whereLine = "[${schemaAndTable}].[${queryRule.field}] ${translateOperator(queryRule.operator,queryRule.value!defaultValue, queryRule.dataType)?no_esc}">
 	<#return whereLine>
 </#function>
 
@@ -108,7 +116,7 @@ Process Rule
 		<#if firstWhereClauseLine == true>
 		    ${indent(indentSpaces)}(<#lt>
 		<#else>
-		    ${indent(indentSpaces)}${queryRule.condition?upper_case} (<#lt>
+		    ${indent(indentSpaces)}${condition?upper_case} (<#lt>
 		    <#assign firstWhereClauseLine = true>
 		</#if>
         <#list queryRule.rules as queryRuleInternal>

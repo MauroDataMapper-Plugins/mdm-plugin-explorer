@@ -229,6 +229,19 @@ class IntegrationTestGivens {
             modifyFields)
     }
 
+    Profile "there is a profile identifying a foreign key"(DataElement entity,
+                                                                    User user,
+                                                                    String foreignKeySchemaName,
+                                                                    String foreignKeyTableName,
+                                                                    String foreignKeyColumnName) {
+        "there is a data element sql column profile"(entity, user, { section ->
+            "a profile field value is set"(section, "column_name",entity.label)
+            "a profile field value is set"(section, "foreign_key_schema",foreignKeySchemaName)
+            "a profile field value is set"(section, "foreign_key_table",foreignKeyTableName)
+            "a profile field value is set"(section, "foreign_key_columns",foreignKeyColumnName)
+        })
+    }
+
     private Profile updateAndStoreProfile(
         String providerNamespace,
         String providerName,

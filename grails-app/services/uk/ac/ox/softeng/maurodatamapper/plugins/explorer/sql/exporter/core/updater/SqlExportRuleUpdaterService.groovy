@@ -34,10 +34,13 @@ class SqlExportRuleUpdaterService {
         sqlExportTableOrView.rules.add(new SqlExportRule('where', entityRulesJson))
     }
 
+    /*
     static addCohortRules(MeqlRuleSet cohortRuleSet, SqlExportCohortTableOrView cohortTableOrView) {
-        cohortRuleSet.each(rule -> {
+        cohortRuleSet.rules.each(rule -> {
             addRule(rule, cohortTableOrView)
         })
     }
+
+     */
 
 }

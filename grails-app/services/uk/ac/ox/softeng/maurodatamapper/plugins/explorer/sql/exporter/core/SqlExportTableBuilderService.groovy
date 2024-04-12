@@ -25,6 +25,7 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportPairCohortTabl
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportPreparedJoins
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportTableOrView
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportTables
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.preparer.MeqlPreparerService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.preparer.SqlExportFieldPreparerService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.preparer.SqlExportJoinPreparerService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.preparer.SqlExportRulePreparerService
@@ -86,19 +87,19 @@ class SqlExportTableBuilderService {
         }
 
         // First create cohort table
-        def cohortDataClassNameParts = cohortRuleSet.entity.split('\\.');
-        def schemaName = cohortDataClassNameParts[0]
-        def tableName = cohortDataClassNameParts[1]
+        def nameParts = cohortRuleSet.entity.split('\\.')
+        def schemaName = nameParts[0]
+        def tableName = nameParts[1]
         SqlExportCohortTableOrView cohortTableOrView = new SqlExportCohortTableOrView(schemaName, tableName);
 
         // Get the cohort data class
         def cohortDataClass = DataModelReaderService.getDataClass(dataModel, schemaName, tableName)
 
         setCohortPrimaryKeys(cohortTableOrView, cohortDataClass)
-        addCohortJoins(dataModel, cohortRuleSet, schemaName, cohortTableOrView, cohortDataClass)
+        addCohortJoins(dataModel, cohortRuleSet, cohortTableOrView, cohortDataClass)
 
         // Now add any rules (where clause)
-        SqlExportRuleUpdaterService.addCohortRules(cohortRuleSet, cohortTableOrView)
+        SqlExportRuleUpdaterService.addRule(cohortRuleSet, cohortTableOrView)
 
         // Return the cohort Data Class
         new SqlExportPairCohortTableAndCohortDataClass(cohortTableOrView, cohortDataClass)
@@ -144,7 +145,7 @@ class SqlExportTableBuilderService {
      * @return
      */
     private setCohortPrimaryKeys(SqlExportCohortTableOrView cohortTableOrView, DataClass cohortDataClass) {
-        def cohortPrimaryKeys = sqlExportFieldPreparerService.getCohortPrimaryKeys(cohortTableOrView, cohortDataClass )
+        def cohortPrimaryKeys = sqlExportFieldPreparerService.getCohortPrimaryKeys(cohortDataClass )
         SqlExportFieldUpdaterService.setCohortPrimaryKey(cohortTableOrView, cohortPrimaryKeys)
     }
 
@@ -167,8 +168,8 @@ class SqlExportTableBuilderService {
      * @param cohortTableOrView
      * @return
      */
-    private addCohortJoins(DataModel dataModel, MeqlRuleSet cohortRuleSet, String schemaName, SqlExportCohortTableOrView cohortTableOrView, DataClass cohortDataClass) {
-        def preparedJoins = sqlExportJoinPreparerService.getCohortJoin(dataModel, cohortRuleSet, schemaName, cohortTableOrView)
+    private addCohortJoins(DataModel dataModel, MeqlRuleSet cohortRuleSet, SqlExportCohortTableOrView cohortTableOrView, DataClass cohortDataClass) {
+        def preparedJoins = sqlExportJoinPreparerService.getCohortJoin(dataModel, cohortRuleSet, cohortTableOrView)
         addJoins(preparedJoins, cohortTableOrView, cohortTableOrView, cohortDataClass)
      }
 
@@ -209,8 +210,8 @@ class SqlExportTableBuilderService {
         })
 
         preparedJoins.cohortColumnNames.each(cohortColumnName -> {
-            def cohortColumn = sqlExportFieldPreparerService.getCohortColumn(cohortTableOrView, cohortDataClass, cohortColumnName)
-            SqlExportFieldUpdaterService.addColumnToCohort(cohortTableOrView, cohortColumn)
+            def cohortColumn = sqlExportFieldPreparerService.getCohortColumn(cohortDataClass, cohortColumnName)
+            SqlExportFieldUpdaterService.setSqlExportColumns(cohortTableOrView, cohortColumn)
         })
     }
 
@@ -222,8 +223,7 @@ class SqlExportTableBuilderService {
      * @return
      */
     private static addDataTableRule(String entity, MeqlRuleSet dataRuleSet, SqlExportTableOrView sqlExportTableOrView) {
-        def rule = SqlExportRulePreparerService.getRuleForEntity(entity, dataRuleSet)
+        def rule = SqlExportRulePreparerService.getRuleSetFromDataRuleSetForEntity(entity, dataRuleSet)
         SqlExportRuleUpdaterService.addRule(rule, sqlExportTableOrView)
     }
-
 }

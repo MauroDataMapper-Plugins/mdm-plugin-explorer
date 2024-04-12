@@ -64,6 +64,12 @@ class MeqlReaderService {
         rootRuleSet as MeqlRuleSet
     }
 
+    /**
+     * Convert Meql to a strongly typed object
+     * @param json
+     * @param dataModel
+     * @return
+     */
     static private MeqlRuleBase convertToTypedObject(def json, DataModel dataModel) {
         if (!(json instanceof Map)) {
             return null
@@ -103,10 +109,7 @@ class MeqlReaderService {
      */
     static private String getSQLDataType(def json, DataModel dataModel) {
         def entityParts = (json.entity as String).split('\\.')
-        // def dataSchema = dataModel.dataClasses.find((dataClass) -> {dataClass.label == entityParts[0]})
-        // def dataTable = dataSchema.dataClasses.find((dataClass) -> {dataClass.label == entityParts[1]})
         def dataTable = DataModelReaderService.getDataClass(dataModel, entityParts[0], entityParts[1])
-        // def dataElement = dataTable.dataElements.find((dataElement) -> {dataElement.label == json.field as String})
         def dataElement = DataModelReaderService.getDataElement(dataTable, json.field as String)
         def dataType =  (dataElement.dataType.domainType == "PrimitiveType") ? dataElement.dataType.label : 'NOT_PRIMITIVE'
         dataType

@@ -1,0 +1,22 @@
+{
+    "rules": [
+        {
+            "rules": [
+                {
+                    "value": "1",
+                    "dataType": "int",
+                    "entity": "medical.treatments",
+                    "operator": "=",
+                    "meqlType": "Rule",
+                    "field": "id"
+                }
+            ],
+            "entity": "medical.treatments",
+            "meqlType": "RuleSet",
+            "condition": "and"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

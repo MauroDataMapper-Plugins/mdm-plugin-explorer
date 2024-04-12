@@ -17,37 +17,10 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers
 
-import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
-import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
-import uk.ac.ox.softeng.maurodatamapper.core.facet.Rule
-import uk.ac.ox.softeng.maurodatamapper.core.facet.rule.RuleRepresentation
-import uk.ac.ox.softeng.maurodatamapper.core.model.facet.MultiFacetAware
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRule
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRuleBase
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRuleSet
-import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
-import uk.ac.ox.softeng.maurodatamapper.profile.domain.ProfileField
-import uk.ac.ox.softeng.maurodatamapper.profile.domain.ProfileSection
-import uk.ac.ox.softeng.maurodatamapper.profile.object.Profile
-import uk.ac.ox.softeng.maurodatamapper.security.User
-import uk.ac.ox.softeng.maurodatamapper.test.unit.security.TestUser
-import uk.ac.ox.softeng.maurodatamapper.util.GormUtils
-
-import grails.validation.ValidationException
-import groovy.transform.stc.ClosureParams
-import groovy.transform.stc.SimpleType
 import groovy.util.logging.Slf4j
-import org.grails.datastore.gorm.GormEntity
-import org.spockframework.util.Assert
-import org.springframework.context.MessageSource
-
-import static uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress.getFUNCTIONAL_TEST
 
 @Slf4j
 class MeqlTestGivens {

@@ -31,20 +31,8 @@ class SqlExportFieldUpdaterService {
      */
     static void setCohortPrimaryKey(SqlExportCohortTableOrView cohortTableOrView, SqlExportCohortColumn[] cohortPrimaryKeys) {
         cohortPrimaryKeys.each(sqlExportCohortColumn -> {
-            addColumnToCohort(cohortTableOrView, sqlExportCohortColumn)
+            setSqlExportColumns(cohortTableOrView, sqlExportCohortColumn)
         })
-    }
-
-    /**
-     * Add a column to the cohort data table
-     * @param cohortTableOrView
-     * @param sqlExportCohortColumn
-     */
-    static void addColumnToCohort(SqlExportCohortTableOrView cohortTableOrView, SqlExportCohortColumn sqlExportCohortColumn) {
-        if (!cohortTableOrView) {
-            return
-        }
-        pushColumn(cohortTableOrView, sqlExportCohortColumn)
     }
 
     /**

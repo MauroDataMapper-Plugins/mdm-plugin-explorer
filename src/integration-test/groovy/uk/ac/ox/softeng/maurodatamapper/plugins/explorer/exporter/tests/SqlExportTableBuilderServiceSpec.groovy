@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired
 @Integration
 @Slf4j
 @Rollback
-class DataModelSqlExporterServiceSpec extends BaseIntegrationSpec {
+class SqlExportTableBuilderServiceSpec extends BaseIntegrationSpec {
 
     IntegrationTestGivens given
     SqlExporterTestDataModel givenDataModel
@@ -58,7 +58,7 @@ class DataModelSqlExporterServiceSpec extends BaseIntegrationSpec {
         folder = given."there is a folder"('test folder')
     }
 
-    void "should export a sql script for a data model: #testName"(String testName) {
+    void "should build a sql export json for a data model: #testName"(String testName) {
 
         given: "there is initial test data"
         setupData()
@@ -96,18 +96,20 @@ class DataModelSqlExporterServiceSpec extends BaseIntegrationSpec {
         }
 
         where:
-        testName                            | _
-        "cohort and data queries"           | _
-        "no queries"                        | _
-        "cohort query only (bit only)"      | _
-        "cohort query only (date only)"     | _
-        "cohort query only (decimal only)"  | _
-        "cohort query only (int only)"      | _
-        "cohort query only (varchar only)"  | _
-        "cohort query only (simple AND)"    | _
-        "cohort query only (simple OR)"     | _
-        "cohort query only (simple JOIN)"   | _
-        "data query only (int only)"        | _
-
+        testName                                    | _
+        "cohort and data queries"                   | _
+        "no queries"                                | _
+        "cohort query only (bit only)"              | _
+        "cohort query only (date only)"             | _
+        "cohort query only (decimal only)"          | _
+        "cohort query only (int only)"              | _
+        "cohort query only (varchar only)"          | _
+        "cohort query only (simple AND)"            | _
+        "cohort query only (simple OR)"             | _
+        "cohort query only (simple JOIN)"           | _
+        "cohort query only (multiple table JOIN)"   | _
+        "cohort query only (null date)"             | _
+        "cohort query only (multiple ORs)"          | _
+        "data query only (int only)"                | _
     }
 }

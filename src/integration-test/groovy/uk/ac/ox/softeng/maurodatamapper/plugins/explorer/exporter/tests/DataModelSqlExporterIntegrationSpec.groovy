@@ -102,18 +102,20 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
         }
 
         where:
-        testName                            | _
-        "cohort and data queries"           | _
-        "no queries"                        | _
-        "cohort query only (bit only)"      | _
-        "cohort query only (date only)"     | _
-        "cohort query only (decimal only)"  | _
-        "cohort query only (int only)"      | _
-        "cohort query only (varchar only)"  | _
-        "cohort query only (simple AND)"    | _
-        "cohort query only (simple OR)"     | _
-        "cohort query only (simple JOIN)"   | _
-        "data query only (int only)"        | _
-
+        testName                                    | _
+        "cohort and data queries"                   | _
+        "no queries"                                | _
+        "cohort query only (bit only)"              | _
+        "cohort query only (date only)"             | _
+        "cohort query only (decimal only)"          | _
+        "cohort query only (int only)"              | _
+        "cohort query only (varchar only)"          | _
+        "cohort query only (simple AND)"            | _
+        "cohort query only (simple OR)"             | _
+        "cohort query only (simple JOIN)"           | _
+        "cohort query only (multiple table JOIN)"   | _
+        "cohort query only (null date)"             | _
+        "cohort query only (multiple ORs)"          | _
+        "data query only (int only)"                | _
     }
 }

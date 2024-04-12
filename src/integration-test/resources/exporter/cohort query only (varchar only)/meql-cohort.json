@@ -1,0 +1,15 @@
+{
+    "rules": [
+        {
+            "value": "John",
+            "dataType": "varchar",
+            "entity": "people.patients",
+            "operator": "=",
+            "meqlType": "Rule",
+            "field": "forename"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

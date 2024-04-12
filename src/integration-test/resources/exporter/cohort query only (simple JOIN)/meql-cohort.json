@@ -1,0 +1,22 @@
+{
+    "rules": [
+        {
+            "rules": [
+                {
+                    "value": "25/12/2020",
+                    "dataType": "datetime",
+                    "entity": "medical.episodes",
+                    "operator": "=",
+                    "meqlType": "Rule",
+                    "field": "occurredAt"
+                }
+            ],
+            "entity": "medical.episodes",
+            "meqlType": "RuleSet",
+            "condition": "and"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

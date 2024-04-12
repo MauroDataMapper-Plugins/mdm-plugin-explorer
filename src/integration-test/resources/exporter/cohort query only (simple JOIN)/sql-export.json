@@ -106,16 +106,20 @@
             ],
             "columns": [
                 {
-                    "ordinal": "4",
+                    "ordinal": "5",
                     "label": "[medical].[treatments].[do_not_include]"
                 },
                 {
-                    "ordinal": "3",
+                    "ordinal": "4",
                     "label": "[medical].[treatments].[givenOn]"
                 },
                 {
-                    "ordinal": "2",
+                    "ordinal": "3",
                     "label": "[medical].[treatments].[description]"
+                },
+                {
+                    "ordinal": "2",
+                    "label": "[medical].[treatments].[episodeId]"
                 },
                 {
                     "ordinal": "1",

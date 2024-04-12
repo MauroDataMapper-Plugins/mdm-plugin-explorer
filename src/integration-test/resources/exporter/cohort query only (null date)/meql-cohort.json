@@ -1,0 +1,15 @@
+{
+    "rules": [
+        {
+            "value": null,
+            "dataType": "date",
+            "entity": "people.patients",
+            "operator": "=",
+            "meqlType": "Rule",
+            "field": "dateOfBirth"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

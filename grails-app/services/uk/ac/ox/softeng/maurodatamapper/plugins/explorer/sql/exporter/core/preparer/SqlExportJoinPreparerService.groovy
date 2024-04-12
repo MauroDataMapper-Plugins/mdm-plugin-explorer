@@ -45,7 +45,7 @@ class SqlExportJoinPreparerService {
      * @param cohortTableOrView
      * @return
      */
-    SqlExportPreparedJoins getCohortJoin(DataModel dataModel, MeqlRuleSet cohortRuleSet, String schemaName, SqlExportCohortTableOrView cohortTableOrView) {
+    SqlExportPreparedJoins getCohortJoin(DataModel dataModel, MeqlRuleSet cohortRuleSet, SqlExportCohortTableOrView cohortTableOrView) {
 
         // Work out if we need to join to other tables
         def cohortRuleEntities = MeqlPreparerService.getDistinctEntitiesReferencedByRules(cohortRuleSet)
@@ -58,13 +58,17 @@ class SqlExportJoinPreparerService {
             return
         }
 
+        // If the cohort entries are not in the expected format throw an error
+        if (cohortRuleEntities.find(entity -> entity.split('\\.').size() != 2)) {
+            throw new Exception("Unable to create join. Cohort rule entity has been found that is not in the expected format of \"schemaName.tableName\"")
+        }
+
         // Create a list of Joins to Return
         SqlExportPreparedJoins preparedJoins = new SqlExportPreparedJoins()
 
         // Gather foreign key references
         cohortRuleEntities.each(referenceEntity -> {
-            def referenceSchemaLabel = referenceEntity.replace("$schemaName.", "")
-            def referenceParts = referenceSchemaLabel.split('\\.')
+            def referenceParts = referenceEntity.split('\\.')
             def referenceDataClass = DataModelReaderService.getDataClass(dataModel, referenceParts[0], referenceParts[1])
 
             def sqlExportJoinKeysPair = getJoinOnForeignKeyDataElements("[${referenceParts[0]}].[${referenceParts[1]}]",
@@ -79,6 +83,14 @@ class SqlExportJoinPreparerService {
         preparedJoins
     }
 
+    /**
+     * Get a join to the cohort temp table
+     * @param dataModel
+     * @param dataTableOrView
+     * @param cohortTableOrView
+     * @param cohortDataClass
+     * @return
+     */
     SqlExportPreparedJoins getDataTableJoinToCohort(DataModel dataModel,
                                                     DataClass dataTableOrView,
                                                     SqlExportCohortTableOrView cohortTableOrView,
@@ -109,6 +121,14 @@ class SqlExportJoinPreparerService {
         preparedJoins
     }
 
+    /**
+     * Get the cohort join and names of columns in cohort table that are being joined to
+     * @param tableName
+     * @param dataClass
+     * @param cohortTableOrView
+     * @param buildingCohortQuery
+     * @return
+     */
     private SqlExportPairJoinAndCohortColumnNames getJoinOnForeignKeyDataElements(String tableName, DataClass dataClass, SqlExportCohortTableOrView cohortTableOrView, boolean buildingCohortQuery = false) {
         def joinAndColumnNamesPair = createJoinAndCohortColumnNamesPair(tableName)
         dataClass.dataElements.each(dataElement -> {
@@ -124,6 +144,14 @@ class SqlExportJoinPreparerService {
     }
 
     private static void populatePreparedJoins(SqlExportPreparedJoins preparedJoins, SqlExportPairJoinAndCohortColumnNames sqlExportJoinKeysPair) {
+        if (!sqlExportJoinKeysPair.sqlExportJoin) {
+            return
+        }
+
+        if (!(sqlExportJoinKeysPair.cohortColumnNames?.size() > 0)) {
+            return
+        }
+
         preparedJoins.sqlExportJoins.push(sqlExportJoinKeysPair.sqlExportJoin)
         sqlExportJoinKeysPair.cohortColumnNames.each(cohortColumnName -> preparedJoins.cohortColumnNames.push(cohortColumnName))
     }
@@ -157,6 +185,13 @@ class SqlExportJoinPreparerService {
         }
     }
 
+    /**
+     * Create the "on" clause and name of column that is being referenced
+     * @param dataElement
+     * @param cohortTableOrView
+     * @param buildingCohortQuery
+     * @return
+     */
     private SqlExportPairOnAndCohortColumnName createOnClauseForJoin(DataElement dataElement,
                                                                      SqlExportCohortTableOrView cohortTableOrView,
                                                                      Boolean buildingCohortQuery = false) {
@@ -167,7 +202,7 @@ class SqlExportJoinPreparerService {
         }
 
         String onString = (buildingCohortQuery)
-            ? getJoinForCohort(dataElement, foreignKeyProfileFields)
+            ? getJoinForCohort(dataElement, foreignKeyProfileFields, cohortTableOrView)
             : getJoinToCohort(dataElement, foreignKeyProfileFields, cohortTableOrView)
 
         if (!onString) {
@@ -196,6 +231,13 @@ class SqlExportJoinPreparerService {
         joinAndCohortColumnNamesPair
     }
 
+    /**
+     * Create the "on" condition to join to the temp cohort query table
+     * @param dataElement
+     * @param foreignKeyProfileFields
+     * @param cohortTableOrView
+     * @return
+     */
     private static String getJoinToCohort(DataElement dataElement, SqlExportForeignKeyProfileFields foreignKeyProfileFields, SqlExportCohortTableOrView cohortTableOrView){
         if (!cohortTableOrView ||
             "[${foreignKeyProfileFields.schema.currentValue}].[${foreignKeyProfileFields.table.currentValue}]" != cohortTableOrView.label ||
@@ -206,12 +248,34 @@ class SqlExportJoinPreparerService {
         getJoinToCohortString(foreignKeyProfileFields.columns.currentValue, dataElement, cohortTableOrView)
     }
 
-    private static String getJoinForCohort(DataElement dataElement, SqlExportForeignKeyProfileFields foreignKeyProfileFields) {
+    /**
+     * Create the "on" condition to join to the core table in the star schema. If the table being joined to
+     * is not the core table then do not return a join string.
+     * @param dataElement
+     * @param foreignKeyProfileFields
+     * @param cohortTableOrView
+     * @return
+     */
+    private static String getJoinForCohort(DataElement dataElement, SqlExportForeignKeyProfileFields foreignKeyProfileFields, SqlExportCohortTableOrView cohortTableOrView) {
+        def parts = cohortTableOrView.label.split(/\./)
+        def schemaName = parts[0].replaceAll(/^\[|\]$/,'')
+        def tableName = parts[1].replaceAll(/^\[|\]$/,'')
+
+        if (foreignKeyProfileFields.schema.currentValue != schemaName || foreignKeyProfileFields.table.currentValue != tableName) {
+            return null
+        }
         def foreignKeyColumn = "[${foreignKeyProfileFields.schema.currentValue}].[${foreignKeyProfileFields.table.currentValue}].[${foreignKeyProfileFields.columns.currentValue}]"
         def referenceKeyColumn =  "[${dataElement.dataClass.parentDataClass.label}].[${dataElement.dataClass.label}].[${dataElement.label}]"
         return "${referenceKeyColumn} = ${foreignKeyColumn}"
     }
 
+    /**
+     * Create the "on" condition string to join to the temp cohort query table
+     * @param cohortColumn
+     * @param dataElement
+     * @param cohortTableOrView
+     * @return
+     */
     private static String getJoinToCohortString(String cohortColumn, DataElement dataElement, SqlExportCohortTableOrView cohortTableOrView) {
         "[${cohortTableOrView.tempTableName}].[${cohortColumn}] = [${dataElement.dataClass.parentDataClass.label}].[${dataElement.dataClass.label}].[${dataElement.label}]"
     }

@@ -1,0 +1,23 @@
+{
+    "rules": [
+        {
+            "value": "18",
+            "dataType": "int",
+            "entity": "people.patients",
+            "operator": ">=",
+            "meqlType": "Rule",
+            "field": "age"
+        },
+        {
+            "value": "65",
+            "dataType": "int",
+            "entity": "people.patients",
+            "operator": "<=",
+            "meqlType": "Rule",
+            "field": "age"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

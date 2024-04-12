@@ -19,7 +19,6 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.prep
 
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportCohortColumn
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportCohortTableOrView
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportColumn
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader.DataModelReaderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader.ProfileReaderService
@@ -28,15 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired
 
 class SqlExportFieldPreparerService {
     @Autowired
-    ProfileReaderService profileReaderService;
+    ProfileReaderService profileReaderService
 
     /**
      * Return a list of all primary keys that exist on the cohort table
-     * @param cohortTableOrView
      * @param cohortDataClass
      * @return
      */
-    SqlExportCohortColumn[] getCohortPrimaryKeys(SqlExportCohortTableOrView cohortTableOrView, DataClass cohortDataClass) {
+    SqlExportCohortColumn[] getCohortPrimaryKeys(DataClass cohortDataClass) {
         if (!cohortDataClass) {
             return []
         }
@@ -44,7 +42,7 @@ class SqlExportFieldPreparerService {
         def primaryKeys = profileReaderService.getPrimaryKeys(cohortDataClass)
 
         (SqlExportCohortColumn[]) primaryKeys.collect { primaryKeyColumnName ->
-            getCohortColumn(cohortTableOrView, cohortDataClass, primaryKeyColumnName, true)
+            getCohortColumn(cohortDataClass, primaryKeyColumnName, true)
         }.toArray()
     }
 
@@ -53,24 +51,24 @@ class SqlExportFieldPreparerService {
      * This information is:
      *  - The SQL Server data type
      *  - Whether it is a primary key or not
-     * @param cohortTableOrView
      * @param cohortDataClass
      * @param columnName
      * @param primaryKey
      * @return
      */
-    static SqlExportCohortColumn getCohortColumn(SqlExportCohortTableOrView cohortTableOrView, DataClass cohortDataClass, String columnName, Boolean primaryKey = false) {
+    static SqlExportCohortColumn getCohortColumn(DataClass cohortDataClass, String columnName, Boolean primaryKey = false) {
 
-        if (!cohortTableOrView) {
+        if (!cohortDataClass || !columnName) {
             return
         }
 
-        if (!cohortDataClass) {
+        def dataElement = DataModelReaderService.getDataElement(cohortDataClass, columnName)
+
+        if (!dataElement) {
             return
         }
 
         def prefixedColumnName = getPrefixedColumnName(columnName, cohortDataClass)
-        def dataElement = DataModelReaderService.getDataElement(cohortDataClass, columnName)
 
         return new SqlExportCohortColumn(prefixedColumnName, dataElement.dataType.label, primaryKey)
 

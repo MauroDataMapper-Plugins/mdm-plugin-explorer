@@ -76,19 +76,7 @@ class SqlExporterTestDataModel {
         def episodesTableDataClass = given."there is a data class"("episodes", dataModel, dboSchemaDataClassMedical)
         given."there is a data element"("id", dataModel, episodesTableDataClass, intDataType)    // Primary key
         def referenceElement = given."there is a data element"("patientId", dataModel, episodesTableDataClass, patientEpisodesForeignKeyRefType)    // Foreign key to "users.id"
-        given."there is a data element sql column profile"(referenceElement, testUser, { section ->
-            given."a profile field value is set"(section, "character_maximum_length", "50") // varchar(50)
-            given."a profile field value is set"(section, "ordinal_position", "3")
-            given."a profile field value is set"(section, "column_name","patientId")
-            given."a profile field value is set"(section, "original_data_type","int")
-            given."a profile field value is set"(section, "foreign_key_name","FK__Location__Patien__6C190EBB	")
-            given."a profile field value is set"(section, "foreign_key_schema","people")
-            given."a profile field value is set"(section, "foreign_key_table","patients")
-            given."a profile field value is set"(section, "foreign_key_columns","id")
-            given."a profile field value is set"(section, "numeric_precision","10")
-            given."a profile field value is set"(section, "numeric_precision_radix","10")
-            given."a profile field value is set"(section, "ordinal_position","3")
-        })
+        given."there is a profile identifying a foreign key"(referenceElement, testUser, "people", "patients", "id")
         given."there is a data element"("description", dataModel, episodesTableDataClass, varcharDataType)
         given."there is a data element"("score", dataModel, episodesTableDataClass, decimalDataType)
         given."there is a data element"("occurredAt", dataModel, episodesTableDataClass, dateTimeDataType)
@@ -97,23 +85,17 @@ class SqlExporterTestDataModel {
         // Relationship - "patients" <--> "treatments"
         def patientTreatmentForeignKeyRefType = given."there is a reference data type"("treatment_to_patients_ref", dataModel, patientsTableDataClass)
 
+        // Relationship - "episodes" <--> "treatments"
+        def episodeTreatmentForeignKeyRefType = given."there is a reference data type"("treatment_to_patients_ref", dataModel, episodesTableDataClass)
+
         // Table - "treatments"
         def treatmentsTableDataClass = given."there is a data class"("treatments", dataModel, dboSchemaDataClassMedical)
         given."there is a data element"("id", dataModel, treatmentsTableDataClass, intDataType)    // Primary key
-        def patientTreatmentReferenceElement = given."there is a data element"("patientId", dataModel, treatmentsTableDataClass, patientTreatmentForeignKeyRefType)    // Foreign key to "users.id"
-        given."there is a data element sql column profile"(patientTreatmentReferenceElement, testUser, { section ->
-            given."a profile field value is set"(section, "character_maximum_length", "50") // varchar(50)
-            given."a profile field value is set"(section, "ordinal_position", "3")
-            given."a profile field value is set"(section, "column_name","patientId")
-            given."a profile field value is set"(section, "original_data_type","int")
-            given."a profile field value is set"(section, "foreign_key_name","FK__Treatment__Patien__6C190EBB	")
-            given."a profile field value is set"(section, "foreign_key_schema","people")
-            given."a profile field value is set"(section, "foreign_key_table","patients")
-            given."a profile field value is set"(section, "foreign_key_columns","id")
-            given."a profile field value is set"(section, "numeric_precision","10")
-            given."a profile field value is set"(section, "numeric_precision_radix","10")
-            given."a profile field value is set"(section, "ordinal_position","3")
-        })
+        def patientTreatmentReferenceElement = given."there is a data element"("patientId", dataModel, treatmentsTableDataClass, patientTreatmentForeignKeyRefType)
+        given."there is a profile identifying a foreign key"(patientTreatmentReferenceElement, testUser, "people", "patients", "id")
+
+        def episodeTreatmentReferenceElement = given."there is a data element"("episodeId", dataModel, treatmentsTableDataClass, episodeTreatmentForeignKeyRefType)
+        given."there is a profile identifying a foreign key"(episodeTreatmentReferenceElement, testUser, "medical", "episodes", "id")
         given."there is a data element"("description", dataModel, treatmentsTableDataClass, varcharDataType)
         given."there is a data element"("givenOn", dataModel, treatmentsTableDataClass, dateTimeDataType)
         given."there is a data element"("do_not_include", dataModel, treatmentsTableDataClass, intDataType)

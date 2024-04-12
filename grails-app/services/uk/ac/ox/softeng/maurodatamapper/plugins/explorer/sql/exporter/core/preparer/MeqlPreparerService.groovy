@@ -48,5 +48,4 @@ class MeqlPreparerService {
         }
         return entities
     }
-
 }

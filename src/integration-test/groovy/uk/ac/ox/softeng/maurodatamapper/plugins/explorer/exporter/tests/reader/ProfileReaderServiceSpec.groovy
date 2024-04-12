@@ -89,19 +89,7 @@ class ProfileReaderServiceSpec extends BaseIntegrationSpec {
         given."there is a data element"("id", dataModel, episodesTableDataClass, intDataType)    // Primary key
         def referenceElement = given."there is a data element"("patientId", dataModel, episodesTableDataClass, patientEpisodesForeignKeyRefType)    // Foreign key to "users.id"
         if (hasForeignKey) {
-            given."there is a data element sql column profile"(referenceElement, testUser, {section ->
-                given."a profile field value is set"(section, "character_maximum_length", "50") // varchar(50)
-                given."a profile field value is set"(section, "ordinal_position", "3")
-                given."a profile field value is set"(section, "column_name", "patientId")
-                given."a profile field value is set"(section, "original_data_type", "int")
-                given."a profile field value is set"(section, "foreign_key_name", "FK__Location__Patien__6C190EBB	")
-                given."a profile field value is set"(section, "foreign_key_schema", "people")
-                given."a profile field value is set"(section, "foreign_key_table", "patients")
-                given."a profile field value is set"(section, "foreign_key_columns", "id")
-                given."a profile field value is set"(section, "numeric_precision", "10")
-                given."a profile field value is set"(section, "numeric_precision_radix", "10")
-                given."a profile field value is set"(section, "ordinal_position", "3")
-            })
+            given."there is a profile identifying a foreign key"(referenceElement, testUser, "people", "patients", "id")
         }
 
         if (hasPrimaryKey) {
@@ -163,19 +151,7 @@ class ProfileReaderServiceSpec extends BaseIntegrationSpec {
         given."there is a data element"("id", dataModel, episodesTableDataClass, intDataType)    // Primary key
         def referenceElement = given."there is a data element"("patientId", dataModel, episodesTableDataClass, patientEpisodesForeignKeyRefType)    // Foreign key to "users.id"
         if (hasForeignKey) {
-            given."there is a data element sql column profile"(referenceElement, testUser, {section ->
-                given."a profile field value is set"(section, "character_maximum_length", "50") // varchar(50)
-                given."a profile field value is set"(section, "ordinal_position", "3")
-                given."a profile field value is set"(section, "column_name", "patientId")
-                given."a profile field value is set"(section, "original_data_type", "int")
-                given."a profile field value is set"(section, "foreign_key_name", "FK__Location__Patien__6C190EBB	")
-                given."a profile field value is set"(section, "foreign_key_schema", "people")
-                given."a profile field value is set"(section, "foreign_key_table", "patients")
-                given."a profile field value is set"(section, "foreign_key_columns", "id")
-                given."a profile field value is set"(section, "numeric_precision", "10")
-                given."a profile field value is set"(section, "numeric_precision_radix", "10")
-                given."a profile field value is set"(section, "ordinal_position", "3")
-            })
+            given."there is a profile identifying a foreign key"(referenceElement, testUser, "people", "patients", "id")
         }
 
         if (hasPrimaryKey) {

@@ -34,9 +34,14 @@ class ProfileReaderService {
     @Autowired
     SqlServerTableProfileProviderService sqlServerTableProfileProviderService
 
+    /**
+     * Get foreign key profile fields
+     * @param dataElement
+     * @return
+     */
     SqlExportForeignKeyProfileFields getForeignKeyProfileFields(DataElement dataElement) {
         def sqlProfile = sqlServerColumnProfileProviderService.createProfileFromEntity(dataElement)
-        if (sqlProfile?.sections?.fields?.size() <= 0) {
+        if (!(sqlProfile?.sections?.fields?.size() > 0)) {
             return null
         }
 
@@ -52,10 +57,15 @@ class ProfileReaderService {
         new SqlExportForeignKeyProfileFields(foreignKeySchema, foreignKeyTable, foreignKeyColumns)
     }
 
+    /**
+     * Get a list of all primary key names in a data class
+     * @param dataClass
+     * @return
+     */
     String[] getPrimaryKeys(DataClass dataClass) {
         // Find the primary keys for the cohort table. We need to load a profile to find this information
         def sqlServerTableProfile = sqlServerTableProfileProviderService.createProfileFromEntity(dataClass)
-        if (sqlServerTableProfile?.sections?.fields?.size() <= 0) {
+        if (!(sqlServerTableProfile?.sections?.fields?.size() > 0)) {
             return []
         }
 
@@ -69,7 +79,14 @@ class ProfileReaderService {
         return primaryKeysList
     }
 
+    /**
+     * Get a profile field that matches the passed in metadataPropertyName
+     * @param profileFields
+     * @param metadataPropertyName
+     * @return
+     */
     private static ProfileField getProfileField(List<ProfileField> profileFields, String metadataPropertyName) {
         return profileFields.find((profileField) -> {profileField.metadataPropertyName == metadataPropertyName})
     }
+
 }
