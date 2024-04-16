@@ -118,15 +118,15 @@ class SqlExportFieldUpdaterServiceSpec extends BaseIntegrationSpec {
         }
     }
 
-    void "add column to table when column already exists"() {
+    void "column is not added again when adding existing column to table"() {
         given: "there is meql data"
         def cohortTableOrView = given."there is a SqlExportCohortTableOrView"("schema","label")
 
-        when: "two columns are pushed"
+        when: "two columns with the same name are pushed"
         SqlExportFieldUpdaterService.setSqlExportColumns(cohortTableOrView,  given."there is a SqlExportCohortColumn"("col1", "int", true))
         SqlExportFieldUpdaterService.setSqlExportColumns(cohortTableOrView,  given."there is a SqlExportCohortColumn"("col1", "int", true))
 
-        then: "it is added to the table"
+        then: "only one column name has been added to the table"
         with {
             {
                 cohortTableOrView.columns.size() == 1

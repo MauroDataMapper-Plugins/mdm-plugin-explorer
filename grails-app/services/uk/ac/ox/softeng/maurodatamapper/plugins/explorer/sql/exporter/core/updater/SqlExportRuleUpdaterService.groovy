@@ -33,14 +33,4 @@ class SqlExportRuleUpdaterService {
         def entityRulesJson = JsonOutput.toJson(rule)
         sqlExportTableOrView.rules.add(new SqlExportRule('where', entityRulesJson))
     }
-
-    /*
-    static addCohortRules(MeqlRuleSet cohortRuleSet, SqlExportCohortTableOrView cohortTableOrView) {
-        cohortRuleSet.rules.each(rule -> {
-            addRule(rule, cohortTableOrView)
-        })
-    }
-
-     */
-
 }
