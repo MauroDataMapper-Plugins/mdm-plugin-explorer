@@ -1,0 +1,30 @@
+{
+  "condition": "and",
+  "entity": "people.patients",
+  "rules": [
+    {
+      "condition": "and",
+      "entity": "medical.episodes",
+      "rules": [
+        {
+          "entity": "medical.episodes",
+          "field": "occurredAt",
+          "operator": "=",
+          "value": "25/12/2020"
+        }
+      ]
+    },
+    {
+      "condition": "and",
+      "entity": "medical.treatments",
+      "rules": [
+        {
+          "entity": "medical.treatments",
+          "field": "givenOn",
+          "operator": "=",
+          "value": "01/01/2023 12:01:01"
+        }
+      ]
+    }
+  ]
+}

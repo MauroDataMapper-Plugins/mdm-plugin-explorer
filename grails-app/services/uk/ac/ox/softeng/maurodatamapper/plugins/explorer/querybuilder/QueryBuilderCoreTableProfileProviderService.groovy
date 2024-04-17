@@ -73,39 +73,36 @@ class QueryBuilderCoreTableProfileProviderService extends JsonProfileProviderSer
     JsonProfile getNewProfile() {
         JsonProfile emptyProfile = EmptyJsonProfileFactory.instance.getEmptyProfile(this)
         emptyProfile.sections[0].customFieldsValidation {fields, errors ->
-                String errorLabel = 'Query Builder core table'
-                String errorField = 'queryBuilderCoreTable'
-                String coreTable = fields.find {it.metadataPropertyName == 'queryBuilderCoreTable'}.currentValue
-                String[] stringParts = coreTable.split('\\.')
-                if (stringParts.size() != 2) return errors.rejectValue("fields[0].currentValue", 'schema.table.format.must.be.valid',
-                                                                       new Object[]{'currentValue', ProfileField.simpleName, null, errorLabel, errorField},
-                                                                       'Format needs to be [Schema].[Table] e.g: people.patient')
-                String schemaName = stringParts[0]
-                String tableName = stringParts[1]
+            String errorLabel = 'Query Builder core table'
+            String errorField = 'queryBuilderCoreTable'
+            String coreTable = fields.find {it.metadataPropertyName == 'queryBuilderCoreTable'}.currentValue
+            String[] stringParts = coreTable.split('\\.')
+            if (stringParts.size() != 2) return errors.rejectValue("fields[0].currentValue", 'schema.table.format.must.be.valid',
+                                                                   new Object[]{'currentValue', ProfileField.simpleName, null, errorLabel, errorField},
+                                                                   'Format needs to be [Schema].[Table] e.g: people.patient')
+            String schemaName = stringParts[0]
+            String tableName = stringParts[1]
 
-                DataModel dataModel = dataModelService.get(dataModelId)
-                if (dataModel) {
-                    DataClass dataSchema = dataModel.dataClasses.find({it.label == schemaName})
-                    if (dataSchema) {
-                        DataClass dataTable = dataSchema.dataClasses.find({it.label == tableName})
-                        if (!dataTable) {
-                            errors.rejectValue("fields[0].currentValue", 'table.must.belong.to.schema',
-                                               new Object[]{'currentValue', 'ProfileField.simpleName', null, errorLabel, errorField},
-                                               "Table \"${tableName}\" cannot be found in schema \"${schemaName}\"")
-                        }
-                    } else {
-                        errors.rejectValue("fields[0].currentValue", 'schema.must.belong.to.datamodel',
-                                           new Object[]{'currentValue', 'ProfileField.simpleName', null, errorLabel, errorField},
-                                           "Schema \"${schemaName}\" cannot be found")
-                    }
-                }
-                else {
-                    // We should never reach this point
-                    throw new Error("DataModel \"${dataModelId}\" cannot be found")
-                }
-
-                return
+            DataModel dataModel = dataModelService.get(dataModelId)
+            if (!dataModel) {
+                // We should never reach this point
+                throw new Error("DataModel \"${dataModelId}\" cannot be found")
             }
+
+            DataClass dataSchema = dataModel.dataClasses.find({it.label == schemaName})
+            if (!dataSchema) {
+                return errors.rejectValue("fields[0].currentValue", 'schema.must.belong.to.datamodel',
+                                   new Object[]{'currentValue', 'ProfileField.simpleName', null, errorLabel, errorField},
+                                   "Schema \"${schemaName}\" cannot be found")
+            }
+
+            DataClass dataTable = dataSchema.dataClasses.find({it.label == tableName})
+            if (!dataTable) {
+                return errors.rejectValue("fields[0].currentValue", 'table.must.belong.to.schema',
+                                   new Object[]{'currentValue', 'ProfileField.simpleName', null, errorLabel, errorField},
+                                   "Table \"${tableName}\" cannot be found in schema \"${schemaName}\"")
+            }
+        }
 
         emptyProfile
     }

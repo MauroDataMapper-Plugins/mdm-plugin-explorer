@@ -1,0 +1,35 @@
+{
+  "condition": "and",
+  "entity": "people.patients",
+  "rules": [
+    {
+      "entity": "people.patients",
+      "field": "dateOfBirth",
+      "operator": ">",
+      "value": "01/01/1960"
+    },
+    {
+      "condition": "and",
+      "entity": "medical.episodes",
+      "rules": [
+        {
+          "entity": "medical.episodes",
+          "field": "occurredAt",
+          "operator": "=",
+          "value": "25/12/2020 08:00:00"
+        },
+        {
+          "entity": "medical.episodes",
+          "field": "score",
+          "operator": "not in",
+          "value": [
+            "1",
+			"2",
+			"9",
+			"10"
+          ]
+        }
+      ]
+    }
+  ]
+}

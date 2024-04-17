@@ -1,0 +1,15 @@
+{
+    "rules": [
+        {
+            "value": "true",
+            "dataType": "bit",
+            "entity": "people.patients",
+            "operator": "=",
+            "meqlType": "Rule",
+            "field": "exercisesRegularly"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

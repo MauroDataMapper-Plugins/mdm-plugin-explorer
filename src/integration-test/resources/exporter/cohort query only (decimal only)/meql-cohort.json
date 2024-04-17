@@ -1,0 +1,15 @@
+{
+    "rules": [
+        {
+            "value": "1.6",
+            "dataType": "decimal",
+            "entity": "people.patients",
+            "operator": "=",
+            "meqlType": "Rule",
+            "field": "height"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}

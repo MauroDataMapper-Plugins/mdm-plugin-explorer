@@ -1,0 +1,53 @@
+{
+    "rules": [
+        {
+            "rules": [
+                {
+                    "value": "18",
+                    "dataType": "int",
+                    "entity": "people.patients",
+                    "operator": "<",
+                    "meqlType": "Rule",
+                    "field": "age"
+                },
+                {
+                    "value": "65",
+                    "dataType": "int",
+                    "entity": "people.patients",
+                    "operator": ">",
+                    "meqlType": "Rule",
+                    "field": "age"
+                }
+            ],
+            "entity": "people.patients",
+            "meqlType": "RuleSet",
+            "condition": "or"
+        },
+        {
+            "rules": [
+                {
+                    "value": "1.2",
+                    "dataType": "decimal",
+                    "entity": "people.patients",
+                    "operator": ">",
+                    "meqlType": "Rule",
+                    "field": "height"
+                },
+                {
+                    "value": "1.8",
+                    "dataType": "decimal",
+                    "entity": "people.patients",
+                    "operator": "<",
+                    "meqlType": "Rule",
+                    "field": "height"
+                }
+            ],
+            "entity": "people.patients",
+            "meqlType": "RuleSet",
+            "condition": "or"
+        }
+    ],
+    "entity": "people.patients",
+    "meqlType": "RuleSet",
+    "condition": "and"
+}
