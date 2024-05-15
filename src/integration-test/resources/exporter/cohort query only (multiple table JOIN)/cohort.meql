@@ -1,0 +1,8 @@
+(
+	(
+		"medical.episodes.occurredAt" = "25/12/2020"
+	)
+	and (
+		"medical.treatments.givenOn" = "01/01/2023 12:01:01"
+	)
+)

@@ -20,7 +20,7 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.tests.reader
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.MeqlRuleSet
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestDataModel
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestHelper
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.ExporterTestHelper
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader.MeqlReaderService
 import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
 import uk.ac.ox.softeng.maurodatamapper.security.User
@@ -39,7 +39,7 @@ class MeqlReaderServiceSpec extends BaseIntegrationSpec {
 
     IntegrationTestGivens given
     SqlExporterTestDataModel givenDataModel
-    SqlExporterTestHelper sqlExporterTestHelper
+    ExporterTestHelper exporterTestHelper
 
     User testUser
 
@@ -49,7 +49,7 @@ class MeqlReaderServiceSpec extends BaseIntegrationSpec {
     def setup() {
         given = new IntegrationTestGivens(messageSource, profileService)
         givenDataModel = new SqlExporterTestDataModel(messageSource, profileService)
-        sqlExporterTestHelper = new SqlExporterTestHelper()
+        exporterTestHelper = new ExporterTestHelper()
     }
 
     @Override
@@ -67,10 +67,10 @@ class MeqlReaderServiceSpec extends BaseIntegrationSpec {
         def dataModel = givenDataModel."baseline data for testing sql exports"(testUser, folder)
 
         // Load queries
-        def cohortQuery = sqlExporterTestHelper.loadJsonFile(testName, "cohort-query.json")
+        def cohortQuery = exporterTestHelper.loadTextFile(testName, "cohort-query.json")
         given."there is a rule with a representation"("cohort",dataModel,"json-meql",cohortQuery)
 
-        def dataQuery = sqlExporterTestHelper.loadJsonFile(testName, "data-query.json")
+        def dataQuery = exporterTestHelper.loadTextFile(testName, "data-query.json")
         given."there is a rule with a representation"("data",dataModel,"json-meql",dataQuery)
 
         checkAndSave(dataModel)
@@ -85,8 +85,8 @@ class MeqlReaderServiceSpec extends BaseIntegrationSpec {
         def dataRuleSetMeqlAsJson = JsonOutput.toJson(dataRuleSet)
         def formattedDataRuleSetMeqlAsJson =  JsonOutput.prettyPrint(dataRuleSetMeqlAsJson)
 
-        def expectedCohort = sqlExporterTestHelper.loadJsonFile(testName, "meql-cohort.json")
-        def expectedData = sqlExporterTestHelper.loadJsonFile(testName, "meql-data.json")
+        def expectedCohort = exporterTestHelper.loadTextFile(testName, "meql-cohort.json")
+        def expectedData = exporterTestHelper.loadTextFile(testName, "meql-data.json")
 
         with {
             formattedCohortRuleSetMeqlAsJson == expectedCohort
@@ -97,7 +97,7 @@ class MeqlReaderServiceSpec extends BaseIntegrationSpec {
         }
 
         where:
-        testName                            | _
+        testName                                    | _
         "cohort and data queries"                   | _
         "no queries"                                | _
         "cohort query only (bit only)"              | _

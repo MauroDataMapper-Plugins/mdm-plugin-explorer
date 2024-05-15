@@ -19,7 +19,7 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.tests
 
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestDataModel
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestHelper
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.ExporterTestHelper
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportTableBuilderService
 import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
 import uk.ac.ox.softeng.maurodatamapper.security.User
@@ -88,8 +88,8 @@ class SqlExportTableBuilderServiceSpec extends BaseIntegrationSpec {
         def sqlExportJsonFormatted = JsonOutput.prettyPrint(sqlExportJson)
 
         then: "the expected sql script is returned"
-        SqlExporterTestHelper sqlExporterTestHelper = new SqlExporterTestHelper()
-        def expectedOutput = sqlExporterTestHelper.loadJsonFile(testName, "sql-export.json")
+        ExporterTestHelper exporterTestHelper = new ExporterTestHelper()
+        def expectedOutput = exporterTestHelper.loadTextFile(testName, "sql-export.json")
 
         with {
             sqlExportJsonFormatted == expectedOutput

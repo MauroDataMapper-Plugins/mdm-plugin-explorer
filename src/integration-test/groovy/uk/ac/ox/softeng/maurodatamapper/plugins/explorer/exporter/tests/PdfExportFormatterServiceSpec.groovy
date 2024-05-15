@@ -17,27 +17,22 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.tests
 
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestDataModel
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.ExporterTestHelper
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.SqlExportTableBuilderService
-import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.provider.exporter.DataModelSqlExporterService
-import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
-import uk.ac.ox.softeng.maurodatamapper.security.User
-import uk.ac.ox.softeng.maurodatamapper.test.integration.BaseIntegrationSpec
-
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.SqlExporterTestDataModel
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.ExporterTestHelper
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.pdf.exporter.core.PdfExportFormatterService
+import uk.ac.ox.softeng.maurodatamapper.profile.ProfileService
+import uk.ac.ox.softeng.maurodatamapper.security.User
+import uk.ac.ox.softeng.maurodatamapper.test.integration.BaseIntegrationSpec
 
 @Integration
 @Slf4j
 @Rollback
-class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
-
-    private DataModelSqlExporterService sut
+class PdfExportFormatterServiceSpec extends BaseIntegrationSpec {
 
     IntegrationTestGivens given
     SqlExporterTestDataModel givenDataModel
@@ -46,24 +41,12 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
     User testUser
 
     @Autowired
-    DataModelService dataModelService
-
-    @Autowired
-    SqlExportTableBuilderService sqlExportDataService
-
-    @Autowired
     ProfileService profileService
 
     def setup() {
         given = new IntegrationTestGivens(messageSource, profileService)
         givenDataModel = new SqlExporterTestDataModel(messageSource, profileService)
         exporterTestHelper = new ExporterTestHelper()
-
-        sqlExportDataService
-
-        sut = new DataModelSqlExporterService()
-        sut.dataModelService = dataModelService
-        sut.sqlExportDataService = sqlExportDataService
     }
 
     @Override
@@ -72,7 +55,7 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
         folder = given."there is a folder"('test folder')
     }
 
-    void "should export a sql script for a data model: #testName"(String testName) {
+    void "should convert meql-json to meql: #testName"(String testName) {
 
         given: "there is initial test data"
         setupData()
@@ -81,24 +64,30 @@ class DataModelSqlExporterIntegrationSpec extends BaseIntegrationSpec {
 
         // Load queries
         def cohortQuery = exporterTestHelper.loadTextFile(testName, "cohort-query.json")
-        given."there is a rule with a representation"("cohort",dataModel,"json-meql",cohortQuery)
+        def cohortRule = given."there is a rule with a representation"("cohort",dataModel,"json-meql",cohortQuery)
 
         def dataQuery = exporterTestHelper.loadTextFile(testName, "data-query.json")
-        given."there is a rule with a representation"("data",dataModel,"json-meql",dataQuery)
+        def dataRule = given."there is a rule with a representation"("data",dataModel,"json-meql",dataQuery)
 
         checkAndSave(dataModel)
 
-        when: "the data model is exported"
-        ByteArrayOutputStream outputStream = sut.exportDomain(testUser, dataModel.id, [:])
+        when: "meql-json is converted to meql"
+        String actualOutput_cohort = PdfExportFormatterService.meqlJsonToMeql(cohortRule.ruleRepresentations.first().representation)
+        String actualOutput_data = PdfExportFormatterService.meqlJsonToMeql(dataRule.ruleRepresentations.first().representation)
 
-        then: "the expected sql script is returned"
-        def expectedOutput = exporterTestHelper.loadTextFile(testName, "sql-export.sql")
+        def expectedOutput_cohort = exporterTestHelper.loadTextFile(testName, "cohort.meql")
+        def expectedOutput_data = exporterTestHelper.loadTextFile(testName, "data.meql")
 
         // Make sure line endings are consistent before comparison
-        String actualOutput = outputStream.toString("UTF-8").trim().replaceAll("\r\n", "\n")
+        actualOutput_cohort = ExporterTestHelper.standardiseLineEndings(actualOutput_cohort)
+        actualOutput_data = ExporterTestHelper.standardiseLineEndings(actualOutput_data)
+        expectedOutput_cohort = ExporterTestHelper.standardiseLineEndings(expectedOutput_cohort)
+        expectedOutput_data = ExporterTestHelper.standardiseLineEndings(expectedOutput_data)
 
+        then: "the expected meql script is returned"
         with {
-            actualOutput == expectedOutput
+            actualOutput_cohort == expectedOutput_cohort
+            actualOutput_data == expectedOutput_data
         }
 
         where:

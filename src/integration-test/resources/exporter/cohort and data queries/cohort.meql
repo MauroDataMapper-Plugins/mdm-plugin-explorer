@@ -1,0 +1,7 @@
+(
+	"people.patients.dateOfBirth" > "01/01/1960"
+	and (
+		"medical.episodes.occurredAt" = "25/12/2020 08:00:00"
+		and "medical.episodes.score" not in "[1, 2, 9, 10]"
+	)
+)

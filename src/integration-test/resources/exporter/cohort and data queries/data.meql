@@ -1,0 +1,14 @@
+(
+	(
+		"medical.episodes.do_not_include" = "true"
+		or "medical.episodes.do_not_include" = "false"
+	)
+	and (
+		"medical.treatments.givenOn" > "01/01/2023 12:01:01"
+		and "medical.treatments.givenOn" < "31/12/2023 23:59:59"
+	)
+	and (
+		"people.patients.age" > "18"
+		and "people.patients.age" < "65"
+	)
+)

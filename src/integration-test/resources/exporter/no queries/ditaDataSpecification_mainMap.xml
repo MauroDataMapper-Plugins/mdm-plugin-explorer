@@ -1,0 +1,8 @@
+<map id='sample-data_onboarded'>
+  <title>sample-data_onboarded</title>
+  <mapref href='links/internalImageLinks.ditamap' processing-role='resource-only' />
+  <mapref href='links/internalTopicLinks.ditamap' processing-role='resource-only' />
+  <mapref href='links/internalMapLinks.ditamap' processing-role='resource-only' />
+  <mapref href='links/externalLinks.ditamap' processing-role='resource-only' />
+  <topicref keyref='datamodel' toc='yes' />
+</map>

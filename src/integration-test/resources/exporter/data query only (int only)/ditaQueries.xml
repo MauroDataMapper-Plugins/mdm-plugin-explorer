@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<topic id="queries">
+   <title>Queries</title>
+   <body>
+      <section>
+         <simpletable>
+            <sthead>
+               <stentry>Cohort Query</stentry>
+            </sthead>
+            <strow>
+               <stentry>
+                  <pre>No query defined</pre>
+               </stentry>
+            </strow>
+         </simpletable>
+      </section>
+      <section>
+         <simpletable>
+            <sthead>
+               <stentry>Data Query</stentry>
+            </sthead>
+            <strow>
+               <stentry>
+                  <pre>(
+	(
+		"medical.treatments.id" = "1"
+	)
+)</pre>
+               </stentry>
+            </strow>
+         </simpletable>
+      </section>
+   </body>
+</topic>

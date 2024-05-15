@@ -1,0 +1,10 @@
+(
+	(
+		"people.patients.age" < "18"
+		or "people.patients.age" > "65"
+	)
+	and (
+		"people.patients.height" > "1.2"
+		or "people.patients.height" < "1.8"
+	)
+)

@@ -1,0 +1,218 @@
+<topic id="datamodel">
+   <title>sample-data_onboarded</title>
+   <topic id="queries">
+      <title>Description</title>
+      <shortdesc>No description provided</shortdesc>
+   </topic>
+   <topic id="queries">
+      <title>Queries</title>
+      <body>
+         <section>
+            <simpletable>
+               <sthead>
+                  <stentry>Cohort Query</stentry>
+               </sthead>
+               <strow>
+                  <stentry>
+                     <pre>No query defined</pre>
+                  </stentry>
+               </strow>
+            </simpletable>
+         </section>
+         <section>
+            <simpletable>
+               <sthead>
+                  <stentry>Data Query</stentry>
+               </sthead>
+               <strow>
+                  <stentry>
+                     <pre>(
+	(
+		"medical.treatments.id" = "1"
+	)
+)</pre>
+                  </stentry>
+               </strow>
+            </simpletable>
+         </section>
+      </body>
+   </topic>
+   <topic id="dataschemas">
+      <title>Schemas</title>
+      <topic id="dc[0]">
+         <title>people</title>
+         <shortdesc/>
+         <topic id="dc[0].dataclasses">
+            <title>Data Classes</title>
+            <topic id="dc[0].dc[0]">
+               <title>patients</title>
+               <shortdesc/>
+               <topic>
+                  <title>DataElements</title>
+                  <body>
+                     <table>
+                        <tgroup cols="3">
+                           <thead>
+                              <row>
+                                 <entry colname="name">Name</entry>
+                                 <entry colname="datatype">DataType</entry>
+                                 <entry colname="description">Description</entry>
+                              </row>
+                           </thead>
+                           <tbody>
+                              <row>
+                                 <entry colname="name">id</entry>
+                                 <entry colname="datatype">int</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">forename</entry>
+                                 <entry colname="datatype">varchar</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">surname</entry>
+                                 <entry colname="datatype">varchar</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">dateOfBirth</entry>
+                                 <entry colname="datatype">date</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">age</entry>
+                                 <entry colname="datatype">int</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">height</entry>
+                                 <entry colname="datatype">decimal</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">exercisesRegularly</entry>
+                                 <entry colname="datatype">bit</entry>
+                                 <entry colname="description"/>
+                              </row>
+                           </tbody>
+                        </tgroup>
+                     </table>
+                  </body>
+               </topic>
+            </topic>
+         </topic>
+      </topic>
+      <topic id="dc[1]">
+         <title>medical</title>
+         <shortdesc/>
+         <topic id="dc[1].dataclasses">
+            <title>Data Classes</title>
+            <topic id="dc[1].dc[0]">
+               <title>episodes</title>
+               <shortdesc/>
+               <topic>
+                  <title>DataElements</title>
+                  <body>
+                     <table>
+                        <tgroup cols="3">
+                           <thead>
+                              <row>
+                                 <entry colname="name">Name</entry>
+                                 <entry colname="datatype">DataType</entry>
+                                 <entry colname="description">Description</entry>
+                              </row>
+                           </thead>
+                           <tbody>
+                              <row>
+                                 <entry colname="name">id</entry>
+                                 <entry colname="datatype">int</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">patientId</entry>
+                                 <entry colname="datatype">patients_ref</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">description</entry>
+                                 <entry colname="datatype">varchar</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">score</entry>
+                                 <entry colname="datatype">decimal</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">occurredAt</entry>
+                                 <entry colname="datatype">datetime</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">do_not_include</entry>
+                                 <entry colname="datatype">bit</entry>
+                                 <entry colname="description"/>
+                              </row>
+                           </tbody>
+                        </tgroup>
+                     </table>
+                  </body>
+               </topic>
+            </topic>
+            <topic id="dc[1].dc[1]">
+               <title>treatments</title>
+               <shortdesc/>
+               <topic>
+                  <title>DataElements</title>
+                  <body>
+                     <table>
+                        <tgroup cols="3">
+                           <thead>
+                              <row>
+                                 <entry colname="name">Name</entry>
+                                 <entry colname="datatype">DataType</entry>
+                                 <entry colname="description">Description</entry>
+                              </row>
+                           </thead>
+                           <tbody>
+                              <row>
+                                 <entry colname="name">id</entry>
+                                 <entry colname="datatype">int</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">patientId</entry>
+                                 <entry colname="datatype">treatment_to_patients_ref</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">episodeId</entry>
+                                 <entry colname="datatype">treatment_to_patients_ref</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">description</entry>
+                                 <entry colname="datatype">varchar</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">givenOn</entry>
+                                 <entry colname="datatype">datetime</entry>
+                                 <entry colname="description"/>
+                              </row>
+                              <row>
+                                 <entry colname="name">do_not_include</entry>
+                                 <entry colname="datatype">int</entry>
+                                 <entry colname="description"/>
+                              </row>
+                           </tbody>
+                        </tgroup>
+                     </table>
+                  </body>
+               </topic>
+            </topic>
+         </topic>
+      </topic>
+   </topic>
+</topic>

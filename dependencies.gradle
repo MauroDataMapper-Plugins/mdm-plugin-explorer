@@ -15,4 +15,7 @@ dependencies {
 
     // SQL Exporter
     implementation "org.freemarker:freemarker:2.3.32"
+
+    // PDF Exporter
+    implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'dita-dsl', version: '1.0.0-SNAPSHOT'
 }
