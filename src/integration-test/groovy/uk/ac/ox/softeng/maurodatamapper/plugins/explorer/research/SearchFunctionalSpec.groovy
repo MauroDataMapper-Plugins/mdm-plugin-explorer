@@ -394,6 +394,7 @@ class SearchFunctionalSpec extends BaseFunctionalSpec implements SecurityDefinit
           "domainType": "DataClass"
         }
       ],
+      "path": "dm:Search Functional Test Data Model$main|dc:patient|de:date_of_birth",
       "profileFields": [
       {
         "fieldName":"Identifiable Data",
@@ -498,6 +499,7 @@ class SearchFunctionalSpec extends BaseFunctionalSpec implements SecurityDefinit
           "domainType": "DataClass"
         }
       ],
+      "path":"dm:Search Functional Test Data Model$main|dc:diagnosis|de:diagnosis_date",
       "profileFields": [
         {
           "fieldName": "Identifiable Data",
@@ -626,6 +628,7 @@ class SearchFunctionalSpec extends BaseFunctionalSpec implements SecurityDefinit
           "domainType": "DataClass"
         }
       ],
+      "path":"dm:Search Functional Test Data Model$main|dc:lab_test|de:test_date",
       "profileFields": [
         {
           "fieldName": "Identifiable Data",
