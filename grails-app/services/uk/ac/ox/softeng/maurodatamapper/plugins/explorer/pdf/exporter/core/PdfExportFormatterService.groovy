@@ -32,14 +32,6 @@ class PdfExportFormatterService {
         parseQuery(jsonObject)
     }
 
-    /*
-    private static String meqlConnective(String connective) {
-        (connective.toLowerCase() != 'and' && connective.toLowerCase() != 'or') ?
-            'UNKNOWN_CONNECTIVE' : connective.toLowerCase()
-    }
-
-     */
-
     private static String formattedValue(value, boolean quoted = false) {
         def quotes = quoted ? '"' : ''
 
@@ -61,61 +53,6 @@ class PdfExportFormatterService {
         def date = new SimpleDateFormat('dd/MM/yyyy').format(value)
         return "${quotes}${date}${quotes}"
     }
-
-    /*
-    private static String parseQuery(value, String connective = '', int depth = 0, boolean firstRule = true, boolean lastRule = true) {
-        def meql = firstRule && connective != '' ? '(' : ''
-        if (depth > 0) {
-            meql += '\r\n'
-        }
-        def closingTabs = ''
-        (0..<depth).each {
-            meql += '\t'
-            if (it < depth - 1) {
-                closingTabs += '\t'
-            }
-        }
-
-        def nextConnective = ''
-
-        if (connective != '' && !firstRule) {
-            meql += meqlConnective(connective) + ' '
-        }
-
-        value.each { key, val ->
-            {
-                switch (key.toLowerCase()) {
-                    case 'condition':
-                        nextConnective = val
-                        break
-                    case 'rules':
-                        val.eachWithIndex { rule, i ->
-                            meql += parseQuery(rule, nextConnective, depth + 1, i == 0, i == val.size() - 1)
-                        }
-                        break
-                    case 'field':
-                        def entity = value.entity ?: ''
-                        def fullName = entity ? "${entity}.${val}" : val
-                        meql += formattedValue(fullName, true) + ' '
-                        break
-                    case 'value':
-                        meql += formattedValue(val, true)
-                        break
-                    case 'operator':
-                        meql += formattedValue(val) + ' '
-                        break
-                }
-            }
-        }
-
-        if (lastRule && connective != '') {
-            meql += '\r\n' + closingTabs + ')'
-        }
-
-        meql
-    }
-
-     */
 
     private static String parseQuery(value, String connective = '', int depth = 0, boolean firstRule = true, boolean lastRule = true) {
         def meql = startMeqlSection(connective, depth, firstRule)
