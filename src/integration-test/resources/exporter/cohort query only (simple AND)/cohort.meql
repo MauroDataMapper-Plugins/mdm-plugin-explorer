@@ -1,0 +1,4 @@
+(
+	"people.patients.age" >= "18"
+	and "people.patients.age" <= "65"
+)

@@ -17,13 +17,29 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers
 
-class SqlExporterTestHelper {
-    String loadJsonFile(String testName, String fileName) {
+import groovy.xml.DOMBuilder
+import groovy.xml.MarkupBuilder
+import groovy.xml.StreamingMarkupBuilder
+
+class ExporterTestHelper {
+    String loadTextFile(String testName, String fileName) {
         InputStream resourceStream = this.class.getResourceAsStream("/exporter/${testName}/${fileName}")
-        def jsonString = new BufferedReader(new InputStreamReader(resourceStream))
+        def fileString = new BufferedReader(new InputStreamReader(resourceStream))
             .readLines()
             .join("\n")
             .trim()
-        jsonString
+        fileString
+    }
+
+    static String standardiseLineEndings(String input) {
+        def output = input.replace("\r\n","\n")
+        output = output.replace("\r","\n")
+        output = output.trim()
+        output
+    }
+
+    static String standardiseXml(String input) {
+        def xml = DOMBuilder.parse(new StringReader(input))
+        xml.documentElement as String
     }
 }

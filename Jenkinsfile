@@ -135,7 +135,8 @@ pipeline {
 
             recordCoverage(tools: [[parser: 'JACOCO', pattern: '**/reports/jacoco/jacocoTestReport.xml']])
             outputTestResults()
-            jacoco classPattern: '**/build/classes', execPattern: '**/build/jacoco/*.exec', sourceInclusionPattern: '**/*.java,**/*.groovy', sourcePattern: '**/src/main/groovy,**/grails-app/controllers,**/grails-app/domain,**/grails-app/DTOs,**/grails-app/services,**/grails-app/utils'
+            // Restore the jacoco line once we know it is fixed in Jenkins
+            //jacoco classPattern: '**/build/classes', execPattern: '**/build/jacoco/*.exec', sourceInclusionPattern: '**/*.java,**/*.groovy', sourcePattern: '**/src/main/groovy,**/grails-app/controllers,**/grails-app/domain,**/grails-app/DTOs,**/grails-app/services,**/grails-app/utils'
             archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.log'
             zulipNotification(topic: 'mdm-plugin-explorer')
         }

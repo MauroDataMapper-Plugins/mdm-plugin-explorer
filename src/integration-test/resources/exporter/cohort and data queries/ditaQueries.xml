@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<topic id="queries">
+   <title>Queries</title>
+   <body>
+      <section>
+         <simpletable>
+            <sthead>
+               <stentry>Cohort Query</stentry>
+            </sthead>
+            <strow>
+               <stentry>
+                  <pre>(
+	"people.patients.dateOfBirth" &gt; "01/01/1960"
+	and (
+		"medical.episodes.occurredAt" = "25/12/2020 08:00:00"
+		and "medical.episodes.score" not in "[1, 2, 9, 10]"
+	)
+)</pre>
+               </stentry>
+            </strow>
+         </simpletable>
+      </section>
+      <section>
+         <simpletable>
+            <sthead>
+               <stentry>Data Query</stentry>
+            </sthead>
+            <strow>
+               <stentry>
+                  <pre>(
+	(
+		"medical.episodes.do_not_include" = "true"
+		or "medical.episodes.do_not_include" = "false"
+	)
+	and (
+		"medical.treatments.givenOn" &gt; "01/01/2023 12:01:01"
+		and "medical.treatments.givenOn" &lt; "31/12/2023 23:59:59"
+	)
+	and (
+		"people.patients.age" &gt; "18"
+		and "people.patients.age" &lt; "65"
+	)
+)</pre>
+               </stentry>
+            </strow>
+         </simpletable>
+      </section>
+   </body>
+</topic>
