@@ -431,8 +431,9 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyProperty(body.items, 'regularcolors.hyperlink', '#003752')
         verifyProperty(body.items, 'regularcolors.data_specification_count', '#ffe603')
         verifyProperty(body.items, 'contrastcolors.page', '#fff')
-        verifyProperty(body.items, 'contrastcolors.unsent_data_specification', '#008bce')
-        verifyProperty(body.items, 'contrastcolors.submitted_data_specification', '#0e8f77')
+        verifyProperty(body.items, 'contrastcolors.draft_data_specification', '#add8e6')
+        verifyProperty(body.items, 'contrastcolors.finalised_data_specification', '#ffa500')
+        verifyProperty(body.items, 'contrastcolors.submitted_data_specification', '#32cd32')
         verifyProperty(body.items, 'contrastcolors.classrow', '#c4c4c4')
         verifyProperty(body.items, 'images.header.logo', 'NOT SET')
     }

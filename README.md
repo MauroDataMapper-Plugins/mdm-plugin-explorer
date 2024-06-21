@@ -78,12 +78,13 @@ Additional colours can be set as follows. They are split into two types:
 2. Contrasting colours - for screen elements that need an accompanying colour value for contrast. These colours are typically background colours, so a suitable foreground colour can automatically be determined.
 
 | Key                                                        | Description                                                  | Default Value |
-| ---------------------------------------------------------- | ------------------------------------------------------------ | ------------- |
+|------------------------------------------------------------|--------------------------------------------------------------|---------------|
 | explorer.theme.regularcolors.hyperlink                     | Colour for hyperlinks                                        | #003752       |
 | explorer.theme.regularcolors.data-specification-count      | Colour for the counter in the header bar                     | #ffe603       |
 | explorer.theme.contrastcolors.page                         | Overall background page colour                               | #fff          |
-| explorer.theme.contrastcolors.unsent-data-specification    | Colour of status tags for unsent specifications              | #008bce       |
-| explorer.theme.contrastcolors.submitted-data-specification | Colour of status tags for submitted specifications           | #0e8f77       |
+| explorer.theme.contrastcolors.draft-data-specification     | Colour of status tags for draft specifications               | #add8e6       |
+| explorer.theme.contrastcolors.finalised-data-specification | Colour of status tags for finalised specifications           | #ffa500       |
+| explorer.theme.contrastcolors.submitted-data-specification | Colour of status tags for submitted specifications           | #32cd32       |
 | explorer.theme.contrastcolors.classrow                     | Colour of data class rows when listed in data specifications | #c4c4c4       |
 
 Finally, typography can be adjusted for fonts and text sizes. Apart from `fontfamily`, all properties below define the font size, line height and font weight (in order, comma-separated):
