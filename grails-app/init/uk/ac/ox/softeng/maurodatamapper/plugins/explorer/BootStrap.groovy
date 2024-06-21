@@ -122,7 +122,7 @@ class BootStrap implements SecurityDefinition {
                 new Tuple('explorer.theme.regularcolors.hyperlink','#003752'),
                 new Tuple('explorer.theme.regularcolors.data_specification_count','#ffe603'),
                 new Tuple('explorer.theme.contrastcolors.page','#fff'),
-                new Tuple('explorer.theme.contrastcolors.draft_data_specification','#add8E6'),
+                new Tuple('explorer.theme.contrastcolors.draft_data_specification','#add8e6'),
                 new Tuple('explorer.theme.contrastcolors.finalised_data_specification','#ffa500'),
                 new Tuple('explorer.theme.contrastcolors.submitted_data_specification','#32cd32'),
                 new Tuple('explorer.theme.contrastcolors.classrow','#c4c4c4'),
