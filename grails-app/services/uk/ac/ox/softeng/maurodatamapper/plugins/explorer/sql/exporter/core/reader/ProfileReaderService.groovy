@@ -17,10 +17,12 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader
 
+import org.hibernate.SessionFactory
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.plugins.database.sqlserver.column.SqlServerColumnProfileProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.database.sqlserver.table.SqlServerTableProfileProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SchemaTablePair
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.SqlExportForeignKeyProfileFields
 import uk.ac.ox.softeng.maurodatamapper.profile.domain.ProfileField
 
@@ -33,6 +35,9 @@ class ProfileReaderService {
 
     @Autowired
     SqlServerTableProfileProviderService sqlServerTableProfileProviderService
+
+    @Autowired
+    SessionFactory sessionFactory
 
     /**
      * Get foreign key profile fields
@@ -57,6 +62,68 @@ class ProfileReaderService {
         new SqlExportForeignKeyProfileFields(foreignKeySchema, foreignKeyTable, foreignKeyColumns)
     }
 
+    /**
+     * Get a list of all foreign key data elements that are children of the passed in data classes
+     * @param dataClassIds List of data class IDs to search for foreign key data elements
+     * @return List of foreign key data element IDs
+     */
+    List<UUID> getIdsOfChildForeignKeyDataElements(List<UUID> dataClassIds, String coreSchema, String coreTable) {
+        String hql = """
+            SELECT de.id
+            FROM DataElement de
+            JOIN de.metadata md
+            WHERE md.multiFacetAwareItemId = de.id
+            AND md.multiFacetAwareItemDomainType = :domainType
+            AND md.namespace = :namespace
+            AND md.key IN (:keys)
+            AND de.dataClass.id IN (:dataClassIds)
+            AND (
+                (md.key = 'foreign_key_schema' AND md.value = :coreSchema)
+                OR (md.key = 'foreign_key_table' AND md.value = :coreTable)
+            )
+"""
+
+        def session = sessionFactory.currentSession
+        def query = session.createQuery(hql)
+        query.setParameter("domainType", "DataElement")
+        query.setParameter("namespace", "uk.ac.ox.softeng.maurodatamapper.plugins.database.sqlserver.column")
+        query.setParameterList("keys", ["foreign_key_schema", "foreign_key_table", "foreign_key_columns"])
+        query.setParameterList("dataClassIds", dataClassIds)
+        query.setParameter("coreSchema", coreSchema)
+        query.setParameter("coreTable", coreTable)
+
+        query.list()
+    }
+
+    /**
+     * Get the schema and table name for the core table of a data model
+     * @param dataModelId The ID of the data model
+     * @return The schema and table name
+     */
+    SchemaTablePair getQueryBuilderCoreTableProfileInfoForDataModel(UUID dataModelId) {
+        String hql = """
+            SELECT md.value
+            FROM DataModel dm
+            JOIN dm.metadata md
+            WHERE md.multiFacetAwareItemId = dm.id
+            AND md.multiFacetAwareItemDomainType = :domainType
+            AND md.namespace = :namespace
+            AND md.key = :key
+            AND dm.id = :dataModelId
+        """
+
+        def session = sessionFactory.currentSession
+        def query = session.createQuery(hql)
+        query.setParameter("domainType", "DataModel")
+        query.setParameter("namespace", 'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.querybuilder')
+        query.setParameter("key", 'queryBuilderCoreTable')
+        query.setParameter("dataModelId", dataModelId)
+
+        def result = query.uniqueResult() as String
+
+        def parts = result.split('\\.')
+        new SchemaTablePair(parts[0], parts[1])
+    }
     /**
      * Get a list of all primary key names in a data class
      * @param dataClass
