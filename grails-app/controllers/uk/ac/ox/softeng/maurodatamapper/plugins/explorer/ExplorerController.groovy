@@ -26,7 +26,9 @@ import uk.ac.ox.softeng.maurodatamapper.core.path.PathService
 import uk.ac.ox.softeng.maurodatamapper.core.traits.controller.ResourcelessMdmController
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElementService
 import uk.ac.ox.softeng.maurodatamapper.path.Path
+import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.sql.exporter.core.reader.ProfileReaderService
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUser
 import uk.ac.ox.softeng.maurodatamapper.security.CatalogueUserService
 import uk.ac.ox.softeng.maurodatamapper.security.SecurityPolicyManagerService
@@ -50,6 +52,8 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
     ApiPropertyService apiPropertyService
     CatalogueUserService catalogueUserService
     DataModelService dataModelService
+    DataElementService dataElementService
+    ProfileReaderService profileReaderService
     FolderService folderService
     GroupRoleService groupRoleService
     UserGroupService userGroupService
@@ -188,6 +192,38 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
         def latestModelDataSpecifications = getLatestModelFromListOfDataSpecification(dataSpecifications)
 
         respond latestModelDataSpecifications, view: '/dataModel/index', model: [items: latestModelDataSpecifications, userSecurityPolicyManager: currentUserSecurityPolicyManager]
+    }
+
+    def getRequiredCoreTableDataElementIds() {
+        List<UUID> dataElementIds = webRequest.request.JSON as List<UUID>
+
+        // Nothing to do if no elements.
+        if (dataElementIds.isEmpty()) {
+            return respond([])
+        }
+
+        // Retrieve the data elements and use them to get the distinct data classes they are children of.
+        def dataElements = dataElementService.getAll(dataElementIds)
+        def dataClassIds = dataElements.collect { it.dataClassId }.unique() as List<UUID>
+
+        // Use an arbitrary data element to retrieve the root datamodel and from there the core schema and table data.
+        def dataModel = dataElements.first().dataClass.dataModel
+        def coreTableSchemaTablePair = profileReaderService.getQueryBuilderCoreTableProfileInfoForDataModel(dataModel.id)
+
+        // Find the core table and its primary key data element using labels in the path.
+        def coreSchema = dataModel.getDataClasses().find({ it.label == coreTableSchemaTablePair.schema })
+        def coreTable = coreSchema.getDataClasses().find({ it.label == coreTableSchemaTablePair.table })
+        def coreTablePrimaryKeyDataElementId = coreTable.findDataElement('Id').id
+
+        // Search the dataclasses for the required foreign key data elements using the core schema and table
+        // to differentiate between foreign keys to the core table vs other tables.
+        def requiredForeignKeyDataElementsIds = profileReaderService
+                .getIdsOfChildForeignKeyDataElements(dataClassIds, coreTableSchemaTablePair.schema , coreTableSchemaTablePair.table)
+
+        def requiredAdditionalIds = [coreTablePrimaryKeyDataElementId] + requiredForeignKeyDataElementsIds
+        def processedAndUniqueIds = requiredAdditionalIds.collect { it.toString() }.unique()
+
+        respond(processedAndUniqueIds)
     }
 
     private List<DataModel> getLatestModelFromListOfDataSpecification(List<DataModel> dataSpecificationList){

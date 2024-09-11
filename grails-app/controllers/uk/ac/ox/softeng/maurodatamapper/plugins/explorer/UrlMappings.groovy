@@ -31,6 +31,7 @@ class UrlMappings {
                 get "/rootDataModel"(controller: 'explorer', action: 'rootDataModel')
                 get "/sharedDataSpecifications"(controller: 'explorer', action: 'sharedDataSpecifications')
                 get "/getLatestModelDataSpecifications"(controller: 'explorer', action: 'getLatestModelDataSpecifications')
+                post "/getRequiredCoreTableDataElementIds"(controller: 'explorer', action: 'getRequiredCoreTableDataElementIds')
             }
         }
     }
