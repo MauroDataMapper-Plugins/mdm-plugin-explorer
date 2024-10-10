@@ -108,8 +108,8 @@ class BootStrap implements SecurityDefinition {
                 new Tuple('explorer.config.profile_namespace', 'uk.ac.ox.softeng.maurodatamapper.plugins.explorer.research'),
                 new Tuple('explorer.config.profile_service_name', 'ResearchDataElementProfileProviderService'),
 
-                new Tuple('explorer.theme.material.colors.primary','#19381f'),
-                new Tuple('explorer.theme.material.colors.accent','#cdb980'),
+                new Tuple('explorer.theme.material.colors.primary','#003186'),
+                new Tuple('explorer.theme.material.colors.accent','#5677B2'),
                 new Tuple('explorer.theme.material.colors.warn','#a5122a'),
                 new Tuple('explorer.theme.material.typography.fontfamily','Roboto, "Helvetica Neue", sans-serif'),
                 new Tuple('explorer.theme.material.typography.bodyone','14px, 20px, 400'),
