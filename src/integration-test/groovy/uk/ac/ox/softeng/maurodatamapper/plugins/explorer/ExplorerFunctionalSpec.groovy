@@ -417,8 +417,8 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
         verifyResponse OK, response
 
         def body = response.body()
-        verifyProperty(body.items, 'material.colors.primary', '#19381f')
-        verifyProperty(body.items, 'material.colors.accent', '#cdb980')
+        verifyProperty(body.items, 'material.colors.primary', '#003186')
+        verifyProperty(body.items, 'material.colors.accent', '#5677B2')
         verifyProperty(body.items, 'material.colors.warn', '#a5122a')
         verifyProperty(body.items, 'material.typography.fontfamily', 'Roboto, "Helvetica Neue", sans-serif')
         verifyProperty(body.items, 'material.typography.bodyone', '14px, 20px, 400')
