@@ -213,7 +213,7 @@ class ExplorerController implements ResourcelessMdmController, RestResponder, We
         // Find the core table and its primary key data element using labels in the path.
         def coreSchema = dataModel.getDataClasses().find({ it.label == coreTableSchemaTablePair.schema })
         def coreTable = coreSchema.getDataClasses().find({ it.label == coreTableSchemaTablePair.table })
-        def coreTablePrimaryKeyDataElementId = coreTable.findDataElement('PERSON_ID').id
+        def coreTablePrimaryKeyDataElementId = coreTable.findDataElement('Warehouse_Identifier').id
 
         // Search the dataclasses for the required foreign key data elements using the core schema and table
         // to differentiate between foreign keys to the core table vs other tables.
