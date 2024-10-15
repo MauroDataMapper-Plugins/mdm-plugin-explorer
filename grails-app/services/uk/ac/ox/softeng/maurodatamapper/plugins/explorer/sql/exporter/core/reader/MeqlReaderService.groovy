@@ -87,13 +87,14 @@ class MeqlReaderService {
         if (json.containsKey('field') && json.containsKey('operator') && json.containsKey('value')) {
             // Get the type
             def dataType = getSQLDataType(json, dataModel)
+            def meqlField = getMeqlField(json.field as String)
             // Convert to MeqlRule
             return new MeqlRule(
-                json.entity as String,
-                json.field as String,
-                dataType,
-                json.operator as String,
-                json.value as String
+                    json.entity as String,
+                    meqlField,
+                    dataType,
+                    json.operator as String,
+                    json.value as String
             )
         }
 
@@ -109,9 +110,14 @@ class MeqlReaderService {
      */
     static private String getSQLDataType(def json, DataModel dataModel) {
         def entityParts = (json.entity as String).split('\\.')
+        def meqlField = getMeqlField(json.field as String)
         def dataTable = DataModelReaderService.getDataClass(dataModel, entityParts[0], entityParts[1])
-        def dataElement = DataModelReaderService.getDataElement(dataTable, json.field as String)
+        def dataElement = DataModelReaderService.getDataElement(dataTable, meqlField)
         def dataType =  (dataElement.dataType.domainType == "PrimitiveType") ? dataElement.dataType.label : 'NOT_PRIMITIVE'
         dataType
+    }
+
+    static private String getMeqlField(String prefixedMeqlField) {
+        prefixedMeqlField.substring(prefixedMeqlField.lastIndexOf('.') + 1)
     }
 }
