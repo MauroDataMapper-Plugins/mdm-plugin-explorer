@@ -88,13 +88,21 @@ class MeqlReaderService {
             // Get the type
             def dataType = getSQLDataType(json, dataModel)
             def meqlField = getMeqlField(json.field as String)
+            String value
+//            println "**** value ${json.value}, ${json.value?.class}"
+            if (json.value instanceof List) {
+                List<String> labels = json.value.collect {it instanceof Map ? it.value?.label : it.toString()}.collect {"'$it'".toString()}
+                value = labels.join(', ')
+                value = "($value)"
+            }
+            if (!value) value = json.value
             // Convert to MeqlRule
             return new MeqlRule(
                     json.entity as String,
                     meqlField,
                     dataType,
                     json.operator as String,
-                    json.value as String
+                    value
             )
         }
 

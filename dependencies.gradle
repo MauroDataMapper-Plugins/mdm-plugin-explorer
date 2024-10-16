@@ -18,4 +18,7 @@ dependencies {
 
     // PDF Exporter
     implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'dita-dsl', version: '1.0.0-SNAPSHOT'
+
+    implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-plugin-terminology', version: mdmCoreVersion
+
 }
