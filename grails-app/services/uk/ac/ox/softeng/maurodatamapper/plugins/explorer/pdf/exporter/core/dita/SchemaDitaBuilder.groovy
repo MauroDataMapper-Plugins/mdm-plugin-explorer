@@ -20,6 +20,7 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.pdf.exporter.core.dita
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.dita.elements.langref.base.Topic
+import uk.ac.ox.softeng.maurodatamapper.dita.helpers.HtmlHelper
 
 class SchemaDitaBuilder {
     static Topic buildDataSchemaTopic(DataModel dataModel) {
@@ -47,7 +48,7 @@ class SchemaDitaBuilder {
         return Topic.build {
             id dcId
             title dc.label
-            shortdesc dc.description
+            body {div HtmlHelper.replaceHtmlWithDita(dc.description)}
 
             if (dc.dataClasses) {
                 topic(buildDataClassTopic(dc, dcId))
@@ -70,8 +71,8 @@ class SchemaDitaBuilder {
                                     dc.dataElements.sort().each {dt ->
                                         row {
                                             entry(colName: 'name') {txt dt.label}
-                                            entry(colName: 'datatype') {txt dt.dataType.label}
-                                            entry(colName: 'description') {txt dt.description}
+                                            entry(colName: 'datatype') {txt dt.dataType.label.replace('.', '.\u200B')}
+                                            entry(colName: 'description') {div HtmlHelper.replaceHtmlWithDita(dt.description)}
                                         }
                                     }
 
