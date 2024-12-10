@@ -37,8 +37,6 @@ class PdfExportFormatterService {
     private static String formattedValue(value, boolean quoted = false) {
         def quotes = quoted ? '"' : ''
 
-        println "*** formattedValue of ${value.toString()}, ${value.class}"
-
         if (value instanceof Number) {
             return value.toString()
         } else if (value instanceof Date) {
@@ -47,9 +45,6 @@ class PdfExportFormatterService {
             def optionsStr = value && value.length > 0 ? value*.name.join(', ') : 'null'
             return "${quotes}${optionsStr}${quotes}"
         } else if (value instanceof List) {
-            value.each {
-                println "***** value ${it.toString()}, type $it.class"
-            }
             List<String> labels = value.collect {it instanceof Map ? it.value?.label : it.toString()}.collect {"'$it'".toString()}
             String optionsStr = labels.join(', ')
             return "($optionsStr)"
