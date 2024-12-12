@@ -20,6 +20,8 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.tests
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.beans.factory.annotation.Autowired
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.plugins.explorer.exporter.testhelpers.IntegrationTestGivens
@@ -87,31 +89,42 @@ class DataModelPdfExporterIntegrationSpec extends BaseIntegrationSpec {
         checkAndSave(dataModel)
 
         when: "the data model is exported"
-        ByteArrayOutputStream outputStream = pdfExporterService.exportDomain(testUser, dataModel.id, [:])
-        def actualByteSize = writeToFile(outputStream, "${testName}.pdf")
 
-        then: "the generated odf is of the expected size"
-        with {
-            actualByteSize == expectedBytesSize
-        }
+        File file = File.createTempFile( testName, 'pdf');
+        file.deleteOnExit();
+
+        ByteArrayOutputStream outputStream = pdfExporterService.exportDomain(testUser, dataModel.id, [:])
+        def actualByteSize = writeToFile(outputStream, file)
+
+        PDDocument pdDocument = PDDocument.load(file)
+        PDFTextStripper pdfStripper = new PDFTextStripper()
+        String text = pdfStripper.getText(pdDocument)
+        log.debug(text)
+
+
+        then: "the generated pdf is of the expected size"
+
+        actualByteSize > minExpectedBytesSize
+        actualByteSize < maxExpectedBytesSize
+        text.contains(searchPattern)
+
 
 
         // These tests are slow to run and we can only check the bytes size
         // so it is not worth running all the combinations of queries.
         where:
-        testName                                    | expectedBytesSize
-        "no queries"                                | 16077
-        "cohort and data queries"                   | 16329
-        "cohort query only (int only)"              | 16145
-        "data query only (int only)"                | 16157
+        testName                                    | minExpectedBytesSize  | maxExpectedBytesSize  | searchPattern
+        "no queries"                                | 16000                 | 16100                 | 'No query defined'
+        "cohort and data queries"                   | 16300                 | 16400                 | '"medical.episodes.do_not_include" = "true"'
+        "cohort query only (int only)"              | 16100                 | 16200                 | '"people.patients.age" = "18"'
+        "data query only (int only)"                | 16100                 | 16200                 | '"medical.treatments.id" = "1"'
 
     }
 
-    int writeToFile(ByteArrayOutputStream byteArrayOutputStream, String filenameToSaveAs) {
+    int writeToFile(ByteArrayOutputStream byteArrayOutputStream, File file) {
         byte[] bytes = byteArrayOutputStream.toByteArray()
-        Path outputPath = Paths.get('build/tmp', filenameToSaveAs)
-        log.warn('File written to {}', outputPath)
-        Files.write(outputPath, bytes)
+        log.warn('File written to {}', file.toPath().toString())
+        Files.write(file.toPath(), bytes)
         bytes.size()
     }
 }
