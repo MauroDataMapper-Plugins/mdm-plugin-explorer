@@ -107,7 +107,8 @@ class PdfExportFormatterService {
             return ''
         }
 
-        def meql = formattedValue(rule.field, true) + ' '
+        def fullName = rule.entity ? "${rule.entity}.${rule.field}" : rule.field
+        def meql = formattedValue(fullName, true) + ' '
         meql += formattedValue(rule.operator) + ' '
         meql += formattedValue(rule.value, true)
         meql
