@@ -48,7 +48,7 @@ class SchemaDitaBuilder {
         return Topic.build {
             id dcId
             title dc.label
-            body {div HtmlHelper.replaceHtmlWithDita(dc.description)}
+            body {if (dc.description) div HtmlHelper.replaceHtmlWithDita(dc.description)}
 
             if (dc.dataClasses) {
                 topic(buildDataClassTopic(dc, dcId))
@@ -72,7 +72,7 @@ class SchemaDitaBuilder {
                                         row {
                                             entry(colName: 'name') {txt dt.label}
                                             entry(colName: 'datatype') {txt dt.dataType.label.replace('.', '.\u200B')}
-                                            entry(colName: 'description') {div HtmlHelper.replaceHtmlWithDita(dt.description)}
+                                            entry(colName: 'description') {if (dt.description) div HtmlHelper.replaceHtmlWithDita(dt.description)}
                                         }
                                     }
 

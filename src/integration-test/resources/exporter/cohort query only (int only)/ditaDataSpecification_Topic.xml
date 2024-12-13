@@ -39,12 +39,12 @@
       <title>Schemas</title>
       <topic id="dc[0]">
          <title>people</title>
-         <shortdesc/>
+         <body/>
          <topic id="dc[0].dataclasses">
             <title>Data Classes</title>
             <topic id="dc[0].dc[0]">
                <title>patients</title>
-               <shortdesc/>
+               <body/>
                <topic>
                   <title>DataElements</title>
                   <body>
@@ -103,12 +103,12 @@
       </topic>
       <topic id="dc[1]">
          <title>medical</title>
-         <shortdesc/>
+         <body/>
          <topic id="dc[1].dataclasses">
             <title>Data Classes</title>
             <topic id="dc[1].dc[0]">
                <title>episodes</title>
-               <shortdesc/>
+               <body/>
                <topic>
                   <title>DataElements</title>
                   <body>
@@ -160,7 +160,7 @@
             </topic>
             <topic id="dc[1].dc[1]">
                <title>treatments</title>
-               <shortdesc/>
+               <body/>
                <topic>
                   <title>DataElements</title>
                   <body>

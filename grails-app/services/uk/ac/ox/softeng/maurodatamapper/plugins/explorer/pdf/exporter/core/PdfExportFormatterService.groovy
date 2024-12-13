@@ -43,7 +43,7 @@ class PdfExportFormatterService {
             def optionsStr = value && value.length > 0 ? value*.name.join(', ') : 'null'
             return "${quotes}${optionsStr}${quotes}"
         } else if (value instanceof List) {
-            List<String> labels = value.collect {it instanceof Map ? it.value?.label : it.toString()}.collect {"'$it'".toString()}
+            List<String> labels = value.collect {it instanceof Map ? it.value?.label : it.toString()}.collect {formattedValue(it, true)}
             String optionsStr = labels.join(', ')
             return "($optionsStr)"
         } else if (value != null) {
