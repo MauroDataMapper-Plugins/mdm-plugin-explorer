@@ -21,7 +21,4 @@ dependencies {
 
     testImplementation 'org.apache.pdfbox:pdfbox:2.0.27'
 
-
-    implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'mdm-plugin-terminology', version: mdmCoreVersion
-
 }

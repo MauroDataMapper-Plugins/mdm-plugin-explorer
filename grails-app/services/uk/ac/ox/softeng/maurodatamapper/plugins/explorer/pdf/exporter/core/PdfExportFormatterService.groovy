@@ -17,8 +17,6 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.explorer.pdf.exporter.core
 
-import uk.ac.ox.softeng.maurodatamapper.terminology.item.Term
-
 import groovy.json.JsonSlurper
 
 import java.text.SimpleDateFormat
