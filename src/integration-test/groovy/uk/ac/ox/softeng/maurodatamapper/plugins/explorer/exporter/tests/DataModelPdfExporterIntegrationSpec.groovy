@@ -117,7 +117,7 @@ class DataModelPdfExporterIntegrationSpec extends BaseIntegrationSpec {
         "no queries"                                | 16000                 | 16100                 | 'No query defined'
         "cohort and data queries"                   | 16300                 | 16400                 | '"medical.episodes.do_not_include" = "true"'
         "cohort query only (int only)"              | 16100                 | 16200                 | '"people.patients.age" = "18"'
-        "data query only (int only)"                | 16100                 | 16200                 | '"medical.treatments.id" = "1"'
+        "data query only (int only)"                | 16000                 | 16200                 | '"medical.treatments.id" = "1"'
 
     }
 

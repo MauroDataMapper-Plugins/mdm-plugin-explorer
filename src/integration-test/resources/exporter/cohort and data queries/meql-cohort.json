@@ -19,7 +19,7 @@
                     "field": "occurredAt"
                 },
                 {
-                    "value": "[1, 2, 9, 10]",
+                    "value": "(1, 2, 9, 10)",
                     "dataType": "decimal",
                     "entity": "medical.episodes",
                     "operator": "not in",

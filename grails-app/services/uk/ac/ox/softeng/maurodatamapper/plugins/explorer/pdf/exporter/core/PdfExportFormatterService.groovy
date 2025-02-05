@@ -42,6 +42,10 @@ class PdfExportFormatterService {
         } else if (value != null && value.class.simpleName == 'AutocompleteSelectOption[]') {
             def optionsStr = value && value.length > 0 ? value*.name.join(', ') : 'null'
             return "${quotes}${optionsStr}${quotes}"
+        } else if (value instanceof List) {
+            List<String> labels = value.collect {it instanceof Map ? it.value?.label : it.toString()}.collect {formattedValue(it, true)}
+            String optionsStr = labels.join(', ')
+            return "($optionsStr)"
         } else if (value != null) {
             return "${quotes}${value.toString()}${quotes}"
         } else {
@@ -107,7 +111,8 @@ class PdfExportFormatterService {
             return ''
         }
 
-        def meql = formattedValue(rule.field, true) + ' '
+        def fullName = rule.entity ? "${rule.entity}.${rule.field}" : rule.field
+        def meql = formattedValue(fullName, true) + ' '
         meql += formattedValue(rule.operator) + ' '
         meql += formattedValue(rule.value, true)
         meql
