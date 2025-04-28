@@ -17,7 +17,7 @@ dependencies {
     implementation "org.freemarker:freemarker:2.3.32"
 
     // PDF Exporter
-    implementation group: 'uk.ac.ox.softeng.maurodatamapper', name: 'dita-dsl', version: '1.0.0-SNAPSHOT'
+    implementation group: 'org.maurodata', name: 'dita-dsl', version: '1.0.0-SNAPSHOT'
 
     testImplementation 'org.apache.pdfbox:pdfbox:2.0.27'
 
