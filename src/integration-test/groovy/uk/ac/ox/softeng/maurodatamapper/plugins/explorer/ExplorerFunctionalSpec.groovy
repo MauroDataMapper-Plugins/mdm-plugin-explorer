@@ -373,7 +373,7 @@ class ExplorerFunctionalSpec extends BaseFunctionalSpec {
     void 'root data model: should get root data model'() {
         given:
         loginUser('admin@maurodatamapper.com', 'password')
-        updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|dm:${rootDataModel.label}")
+        updateApiProperty('explorer.config.root_data_model_path', "fo:${rootFolder.label}|dm:${rootDataModel.label}\$main")
 
         when: 'get the root data model'
         GET("/rootDataModel")
