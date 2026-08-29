@@ -14,7 +14,7 @@ dependencies {
     runtimeOnly group: 'org.postgresql', name: 'postgresql'
 
     // SQL Exporter
-    implementation "org.freemarker:freemarker:2.3.32"
+    implementation "org.freemarker:freemarker:2.3.35"
 
     // PDF Exporter
     implementation group: 'org.maurodata', name: 'dita-dsl', version: '1.0.0-SNAPSHOT'
